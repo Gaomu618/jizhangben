@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="form-item">
+    <text class="label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="bindDateChange">
+      <view class="picker">{{date}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">金额</text>
+    <input type="digit" placeholder="0.00" bindinput="bindAmountInput" value="{{amount}}" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">类型</text>
+    <view class="type-selector">
+      <view class="{{type === 'expense' ? 'active' : ''}}" bindtap="selectType" data-type="expense">
+        <text>支出</text>
+      </view>
+      <view class="{{type === 'income' ? 'active' : ''}}" bindtap="selectType" data-type="income">
+        <text>收入</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-item">
+    <text class="label">分类</text>
+    <view class="category-selector">
+      <view wx:for="{{categories}}" wx:key="index" wx:for-item="cat"
+        class="{{category === cat ? 'active' : ''}}"
+        bindtap="selectCategory" data-category="{{cat}}">
+        <text>{{cat}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-item">
+    <text class="label">备注</text>
+    <input type="text" placeholder="可选" bindinput="bindNoteInput" value="{{note}}" />
+  </view>
+
+  <view class="btn-group">
+    <button class="delete-btn" bindtap="deleteBill">删除</button>
+    <button class="submit-btn" type="primary" bindtap="submit">保存</button>
+  </view>
+</view>

@@ -1,0 +1,13 @@
+<view class="container">
+  <view class="user-info">
+    <view class="avatar">?</view>
+    <view class="username">{{username}}</view>
+  </view>
+
+  <view class="menu-list">
+    <view class="menu-item" bindtap="logout">
+      <text>退出登录</text>
+      <text class="arrow">&gt;</text>
+    </view>
+  </view>
+</view>

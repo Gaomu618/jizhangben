@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑记录</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
+        body { background: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 400px; }
+        h2 { margin-bottom: 20px; color: #2c3e50; text-align: center; }
+        .form-item { margin-bottom: 15px; }
+        .form-item label { display: block; margin-bottom: 5px; color: #666; }
+        .form-item input, .form-item select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .form-item input:focus, .form-item select:focus { outline: none; border-color: #3498db; }
+        .btn { width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .btn:hover { opacity: 0.9; }
+        .btn-cancel { background: #95a5a6; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>编辑记录</h2>
+        <form method="POST">
+            <div class="form-item">
+                <label>日期</label>
+                <input type="date" name="date" value="{{ record[1] }}" required>
+            </div>
+            <div class="form-item">
+                <label>金额</label>
+                <input type="number" step="0.01" name="amount" value="{{ record[2] }}" required>
+            </div>
+            <div class="form-item">
+                <label>类型</label>
+                <select name="type">
+                    <option value="income" {% if record[3]=='income' %}selected{% endif %}>收入</option>
+                    <option value="expense" {% if record[3]=='expense' %}selected{% endif %}>支出</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>分类</label>
+                <select name="category">
+                    <option value="餐饮" {% if record[4]=='餐饮' %}selected{% endif %}>餐饮</option>
+                    <option value="交通" {% if record[4]=='交通' %}selected{% endif %}>交通</option>
+                    <option value="购物" {% if record[4]=='购物' %}selected{% endif %}>购物</option>
+                    <option value="房租" {% if record[4]=='房租' %}selected{% endif %}>房租</option>
+                    <option value="水电费" {% if record[4]=='水电费' %}selected{% endif %}>水电费</option>
+                    <option value="娱乐" {% if record[4]=='娱乐' %}selected{% endif %}>娱乐</option>
+                    <option value="话费" {% if record[4]=='话费' %}selected{% endif %}>话费</option>
+                    <option value="医疗" {% if record[4]=='医疗' %}selected{% endif %}>医疗</option>
+                    <option value="工资" {% if record[4]=='工资' %}selected{% endif %}>工资</option>
+                    <option value="兼职" {% if record[4]=='兼职' %}selected{% endif %}>兼职</option>
+                    <option value="理财" {% if record[4]=='理财' %}selected{% endif %}>理财</option>
+                    <option value="红包/转账" {% if record[4]=='红包/转账' %}selected{% endif %}>红包/转账</option>
+                    <option value="其他收入" {% if record[4]=='其他收入' %}selected{% endif %}>其他收入</option>
+                    <option value="其他" {% if record[4]=='其他' %}selected{% endif %}>其他</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>备注</label>
+                <input type="text" name="note" value="{{ record[5] or '' }}">
+            </div>
+            <button type="submit" class="btn">保存修改</button>
+            <a href="{{ url_for('index') }}"><button type="button" class="btn btn-cancel">取消</button></a>
+        </form>
+    </div>
+</body>
+</html>

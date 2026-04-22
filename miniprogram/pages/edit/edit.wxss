@@ -1,0 +1,62 @@
+.container {
+  padding: 30rpx;
+}
+.form-item {
+  background: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  border-radius: 12rpx;
+}
+.label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+  display: block;
+}
+input {
+  font-size: 32rpx;
+}
+.type-selector {
+  display: flex;
+  gap: 30rpx;
+}
+.type-selector text {
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  background: #f5f5f5;
+  color: #666;
+}
+.type-selector text.active {
+  background: #07c160;
+  color: #fff;
+}
+.category-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+.category-selector text {
+  padding: 10rpx 25rpx;
+  border-radius: 25rpx;
+  background: #f5f5f5;
+  color: #666;
+  font-size: 28rpx;
+}
+.category-selector text.active {
+  background: #07c160;
+  color: #fff;
+}
+.btn-group {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 50rpx;
+}
+.delete-btn {
+  flex: 1;
+  background: #fa5151;
+  color: #fff;
+}
+.submit-btn {
+  flex: 2;
+  background: #07c160;
+}

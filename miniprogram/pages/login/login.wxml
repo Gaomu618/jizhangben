@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="title">个人记账</view>
+  <button class="login-btn" type="primary" bindtap="wechatLogin">微信登录</button>
+</view>
+
+<style>
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx;
+}
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 100rpx;
+  color: #333;
+}
+.login-btn {
+  width: 80%;
+  background-color: #07c160;
+}
+</style>

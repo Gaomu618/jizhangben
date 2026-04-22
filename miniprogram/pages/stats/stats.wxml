@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="header">
+    <view class="month-selector">
+      <text bindtap="prevMonth">&lt;</text>
+      <text class="month-text">{{year}}年{{month}}月</text>
+      <text bindtap="nextMonth">&gt;</text>
+    </view>
+    <view class="stats-card">
+      <view class="stat-row">
+        <text>收入</text>
+        <text class="income">+{{income}}</text>
+      </view>
+      <view class="stat-row">
+        <text>支出</text>
+        <text class="expense">-{{expense}}</text>
+      </view>
+      <view class="stat-row">
+        <text>结余</text>
+        <text class="{{balance >= 0 ? 'income' : 'expense'}}">{{balance >= 0 ? '+' : ''}}{{balance}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="category-list">
+    <view class="title">支出分类</view>
+    <view wx:for="{{categories}}" wx:key="category" class="category-item">
+      <view class="category-left">
+        <text class="category-name">{{item.category}}</text>
+        <text class="category-percent">{{item.percent}}%</text>
+      </view>
+      <view class="category-right">
+        <text class="category-amount">-{{item.amount}}</text>
+        <view class="progress-bar">
+          <view class="progress" style="width: {{item.percent}}%"></view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{categories.length === 0}}" class="empty">暂无数据</view>
+  </view>
+</view>

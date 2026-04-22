@@ -1,0 +1,37 @@
+<view class="container">
+  <view class="form-item">
+    <text class="label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="bindDateChange">
+      <view class="picker">{{date}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">金额</text>
+    <input type="digit" placeholder="0.00" bindinput="bindAmountInput" value="{{amount}}" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">类型：{{type}}</text>
+    <radio-group bindchange="typeChange">
+      <label><radio value="expense" checked="{{type === 'expense'}}" />支出</label>
+      <label><radio value="income" checked="{{type === 'income'}}" />收入</label>
+    </radio-group>
+  </view>
+
+  <view class="form-item">
+    <text class="label">分类：{{category}}</text>
+    <view class="category-selector">
+      <view wx:for="{{categories}}" wx:key="*this" bindtap="tapCategory" data-index="{{index}}">
+        <text class="{{category === item ? 'active' : ''}}">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-item">
+    <text class="label">备注</text>
+    <input type="text" placeholder="可选" bindinput="bindNoteInput" value="{{note}}" />
+  </view>
+
+  <button class="submit-btn" type="primary" bindtap="submit">保存</button>
+</view>
