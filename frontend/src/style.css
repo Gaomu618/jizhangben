@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./typography.css";
+@import "./decoration.css";
+@import "./motion.css";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #app { min-height: 100vh; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-default);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 页面级暖底背景：替代原 #F5F5F7 内联样式 */
+.app-bg { background: var(--color-bg-default); }
+
+/* ==================== 卡片 ==================== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 16px;
+}
+
+.card-strong {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-flat {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: 16px;
+}
+
+/* ==================== 文字颜色 ==================== */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-income { color: var(--color-feedback-positive); }
+.text-expense { color: var(--color-feedback-negative); }
+.text-accent { color: var(--color-action-accent); }
+.text-warn { color: var(--color-feedback-warning); }
+
+/* ==================== 按钮 ==================== */
+.btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--color-text-primary);
+  border-radius: var(--btn-radius-sm);
+  padding: 8px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease-out);
+}
+.btn:hover { background: var(--paper-50); border-color: var(--muted-2); }
+.btn:active { background: var(--paper-200); }
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  font-weight: 600;
+  border-radius: var(--btn-radius-sm);
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease-out);
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-primary:hover { background: var(--ink-800); }
+.btn-primary:active { background: var(--ink-700); }
+.btn-primary:disabled { background: var(--muted-2); cursor: not-allowed; box-shadow: none; }
+
+.btn-danger {
+  background: var(--color-feedback-negative);
+  color: var(--color-text-inverse);
+  border: none;
+  font-weight: 600;
+  border-radius: var(--btn-radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #b53d12; }
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.btn-ghost:hover { color: var(--color-text-primary); }
+
+/* ==================== 输入 ==================== */
+.input {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all var(--t-fast) var(--ease-out);
+  width: 100%;
+}
+.input:focus {
+  border-color: var(--color-action-accent);
+  box-shadow: 0 0 0 3px rgba(217, 79, 30, 0.12);
+}
+.input::placeholder { color: var(--color-text-muted); }
+
+/* ==================== 字体 ==================== */
+.mono { font-family: var(--font-mono); font-feature-settings: 'tnum'; }
+.display { font-family: var(--font-display); font-weight: 500; }
+.numeric { font-family: var(--font-num); letter-spacing: -0.02em; }
+
+/* ==================== Eyebrow 标签（规范：NO.0X · 英文 · 中文） ==================== */
+.eyebrow {
+  font-family: var(--font-num);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.eyebrow-accent { color: var(--color-action-accent); }
+
+/* ==================== 滚动条 ==================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-2); }
+
+/* ==================== 动画 ==================== */
+.fade-enter-active, .fade-leave-active { transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out); }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(4px); }
+
+/* ==================== 可访问性 ==================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

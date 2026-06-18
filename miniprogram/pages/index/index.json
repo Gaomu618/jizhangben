@@ -1,4 +1,8 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "记账本"
+  "usingComponents": {
+    "base-empty": "/components/base/base-empty"
+  },
+  "navigationBarTitleText": "账本",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

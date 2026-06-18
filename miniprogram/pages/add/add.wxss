@@ -1,55 +1,185 @@
-.container {
-  padding: 30rpx;
+.page {
+  min-height: 100vh;
+  padding: 32rpx;
+  position: relative;
+  overflow: hidden;
 }
-.form-item {
-  background: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-  border-radius: 12rpx;
-}
-.label {
-  font-size: 28rpx;
-  color: #666;
-  margin-bottom: 15rpx;
-  display: block;
-}
-input {
-  font-size: 32rpx;
-}
-.picker {
-  font-size: 32rpx;
-}
-.type-selector {
+
+/* ============== Type Bar ============== */
+.type-bar {
   display: flex;
-  gap: 30rpx;
+  gap: 16rpx;
+  background: var(--paper-200);
+  padding: 8rpx;
+  border-radius: 999px;
+  margin-bottom: 32rpx;
+  position: relative;
+  z-index: 1;
 }
-.type-selector text {
-  padding: 10rpx 30rpx;
-  border-radius: 30rpx;
-  background: #f5f5f5;
-  color: #666;
+.type-pill {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 999px;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all var(--t-fast) var(--ease-out);
 }
-.type-selector text.active {
-  background: #07c160;
-  color: #fff;
+.type-pill.is-active {
+  background: var(--card-bg);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-sm);
 }
-.category-selector {
+
+/* ============== Amount Card ============== */
+.amount-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  padding: 40rpx;
+  position: relative;
+  z-index: 1;
+}
+.amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+.amount-sign {
+  font-size: 56rpx;
+  font-weight: 500;
+  color: var(--ink-900);
+  font-family: var(--font-num);
+}
+.amount-input {
+  flex: 1;
+  font-size: 96rpx;
+  font-weight: 500;
+  color: var(--ink-900);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  height: 112rpx;
+}
+.amount-placeholder { color: var(--muted-2); }
+
+/* ============== Section ============== */
+.section { margin-top: 40rpx; position: relative; z-index: 1; }
+.section-title { display: block; margin-bottom: 16rpx; padding-left: 8rpx; }
+
+/* ============== Category Grid ============== */
+.cat-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
+  gap: 16rpx;
 }
-.category-selector text {
-  padding: 10rpx 25rpx;
-  border-radius: 25rpx;
-  background: #f5f5f5;
-  color: #666;
+.cat-chip {
+  padding: 16rpx 32rpx;
+  background: var(--paper-200);
+  border-radius: 999px;
   font-size: 28rpx;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  transition: all var(--t-fast) var(--ease-out);
 }
-.category-selector text.active {
-  background: #07c160;
-  color: #fff;
+.cat-chip.is-active {
+  background: var(--ink-900);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
 }
-.submit-btn {
-  margin-top: 50rpx;
-  background: #07c160;
+
+/* ============== Picker Row ============== */
+.picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.picker-arrow { color: var(--muted-2); font-size: 40rpx; }
+
+/* ============== Submit Bar ============== */
+.submit-bar {
+  margin-top: 64rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.tabbar-safe { height: 180rpx; }
+
+/* ============== 智能分类提示（置信度 UI）============== */
+/* 三档颜色：high=绿(高置信度) / mid=蓝(中) / low=黄(低，建议核对) */
+.classify-hint {
+  margin-top: 16rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  position: relative;
+  border: 2rpx solid transparent;
+  transition: transform var(--t-fast) var(--ease-out);
+  animation: hint-in var(--t-base) var(--ease-out);
+}
+@keyframes hint-in {
+  from { opacity: 0; transform: translateY(-8rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.classify-hint-hover { transform: scale(0.98); }
+
+.classify-hint--high {
+  background: rgba(34, 139, 80, 0.08);
+  border-color: rgba(34, 139, 80, 0.3);
+}
+.classify-hint--mid {
+  background: rgba(74, 144, 226, 0.08);
+  border-color: rgba(74, 144, 226, 0.3);
+}
+.classify-hint--low {
+  background: rgba(196, 121, 0, 0.08);
+  border-color: rgba(196, 121, 0, 0.35);
+}
+
+.classify-hint-left {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-wrap: wrap;
+}
+.classify-hint-icon { font-size: 28rpx; line-height: 1; }
+.classify-hint-text { font-size: 24rpx; color: var(--color-text-secondary); }
+.classify-hint-cat { font-size: 28rpx; font-weight: 600; color: var(--ink-900); }
+
+.classify-hint-confidence {
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 2rpx 12rpx;
+  border-radius: 12rpx;
+  font-feature-settings: 'tnum';
+}
+.classify-hint-confidence--high {
+  background: rgba(34, 139, 80, 0.15);
+  color: #1b7a3e;
+}
+.classify-hint-confidence--mid {
+  background: rgba(74, 144, 226, 0.15);
+  color: #2e6bb8;
+}
+.classify-hint-confidence--low {
+  background: rgba(196, 121, 0, 0.18);
+  color: #a86500;
+}
+
+.classify-hint-matched {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.classify-hint-arrow {
+  position: absolute;
+  right: 24rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }

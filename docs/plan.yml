@@ -1,0 +1,127 @@
+version: 1
+plan:
+  name: '记账本功能增强'
+  max_concurrency: 5
+  max_consecutive_failures: 2
+  max_cycles: 10
+tasks:
+  - id: search-filter
+    title: '搜索筛选功能'
+    prompt: |
+      在 `frontend/src/views/Dashboard.vue` 中添加搜索筛选功能：
+      1. 在 Dashboard 顶部添加搜索栏，支持：
+         - 日期范围筛选（开始日期 ~ 结束日期）
+         - 分类筛选（下拉选择：全部/各分类）
+         - 类型筛选（全部/收入/支出）
+         - 金额范围筛选（最小金额 ~ 最大金额）
+      2. 搜索功能为实时筛选，不需要点击按钮
+      3. 筛选结果展示在记录列表中，并显示"共 X 条记录"
+      4. 添加"清除筛选"按钮，恢复默认列表
+      5. 样式保持新拟物风格（neu-raised / neu-inset）
+      6. 注意：筛选在本地 Vue 数据上做，不需要调 API
+      7. 报告修改的文件和行号
+    assigned_to: developer
+    verified_by: verifier
+    verify_prompt: |
+      读取 `frontend/src/views/Dashboard.vue`，验证：
+      1. 是否添加了日期范围、分类、类型、金额范围筛选组件
+      2. 筛选逻辑是否正确（本地计算属性过滤）
+      3. 是否显示筛选结果数量
+      4. 样式是否保持新拟物风格
+      5. 不需要运行，只检查代码逻辑
+    timeout_ms: 1200000
+
+  - id: dark-mode
+    title: '深色模式切换'
+    prompt: |
+      在记账本项目中实现深色模式切换：
+      1. 在 `frontend/src/App.vue` 根组件添加深色模式状态管理
+      2. 用 localStorage 记住用户偏好，刷新页面不丢失
+      3. 在 Dashboard 顶部栏添加一个太阳/月亮图标按钮，点击切换
+      4. 深色模式下背景改为 #1a1a2e，卡片改为 #16213e，文字改为 #e0e0e0
+      5. 新拟物阴影在高对比度模式下适当调整（深色用 rgba(0,0,0,0.5)）
+      6. 图表（echarts）tooltip 和 legend 也跟随深色模式
+      7. 报告修改的文件和行号
+    assigned_to: developer
+    depends_on: [search-filter]
+    verified_by: verifier
+    verify_prompt: |
+      读取 `frontend/src/App.vue` 和 `frontend/src/views/Dashboard.vue`，验证：
+      1. 是否有深色模式状态变量
+      2. localStorage 是否保存偏好
+      3. CSS 变量或内联 style 是否支持深色切换
+      4. 太阳/月亮切换按钮是否存在
+      5. 不需要运行，只检查代码
+    timeout_ms: 1200000
+
+  - id: budget-setting
+    title: '预算设定与进度提醒'
+    prompt: |
+      实现预算设定功能：
+      1. 后端：在 `api/bill.py` 或新建 `api/budget.py`，添加接口：
+         - GET /api/budget - 获取当月各分类预算
+         - POST /api/budget - 设置/更新各分类预算（type: expense, category, amount）
+         - 数据存 MySQL 表 jizhang_budgets（user_id, type, category, amount, month）
+      2. 前端：Dashboard 新增一个"预算"入口按钮，打开预算设置弹窗
+         - 显示各支出分类，当前已花金额，预算额度
+         - 进度条：<60% 绿色，60-80% 橙色，>80% 红色 + 轻微抖动动画
+         - 未超过预算显示"剩余 ¥X"，超了显示"已超支 ¥X"
+      3. 预算弹窗保持新拟物风格，居中弹出
+      4. 报告修改的文件、行号和 API 接口列表
+    assigned_to: developer
+    depends_on: [dark-mode]
+    verified_by: verifier
+    verify_prompt: |
+      读取后端 API 文件，验证：
+      1. 预算接口是否存在且格式正确
+      2. 前端预算弹窗是否包含进度条和各分类输入
+      3. 数据库表结构是否合理
+      4. 不需要运行，只检查代码
+    timeout_ms: 1500000
+
+  - id: trend-chart
+    title: '趋势折线图'
+    prompt: |
+      在统计页面 Stats.vue 中添加近6个月收支趋势折线图：
+      1. 后端：GET /api/stats/trend?months=6 返回近6个月数据，格式：
+         { months: ['2025-01','2025-02',...], income: [1000, 2000,...], expense: [800, 1500,...] }
+      2. 前端 Stats.vue：在现有柱状图下方添加折线图
+         - X 轴月份，Y 轴金额
+         - 收入线绿色，支出线红色
+         - tooltip 显示当月收支和结余
+      3. 图表容器用 neu-raised 卡片包裹
+      4. 报告修改的文件和行号
+    assigned_to: developer
+    depends_on: [budget-setting]
+    verified_by: verifier
+    verify_prompt: |
+      读取 `frontend/src/views/Stats.vue` 和后端 stats API，验证：
+      1. 折线图是否使用 echarts 实现
+      2. 数据源接口是否正确
+      3. 图表样式是否可读（颜色对比、坐标轴标签）
+      4. 不需要运行，只检查代码
+    timeout_ms: 1200000
+
+  - id: multi-export
+    title: '多格式导出 PDF/CSV'
+    prompt: |
+      扩展导出功能，支持 PDF 和 CSV：
+      1. 后端：`GET /api/bill/export?format=csv` 和 `GET /api/bill/export?format=pdf`
+         - CSV：返回 CSV 文件流，Content-Type: text/csv
+         - PDF：用 xhtml2pdf 或 reportlab 生成，包含表头（日期/类型/分类/金额/备注）和数据
+      2. 前端 Dashboard：在"导出"按钮旁添加下拉菜单，支持选择格式
+         - Excel (.xlsx) - 已有
+         - CSV (.csv)
+         - PDF (.pdf)
+      3. PDF 样式简洁，包含账单汇总信息（用户名、总收入、总支出、结余）
+      4. 报告修改的文件和行号
+    assigned_to: developer
+    depends_on: [trend-chart]
+    verified_by: verifier
+    verify_prompt: |
+      读取后端 bill API，验证：
+      1. CSV 和 PDF 导出接口是否存在
+      2. 前端下拉选择是否支持三种格式
+      3. PDF 内容是否包含账单汇总
+      4. 不需要运行，只检查代码
+    timeout_ms: 1500000

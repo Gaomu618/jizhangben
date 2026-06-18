@@ -1,46 +1,70 @@
-<view class="container">
-  <view class="form-item">
-    <text class="label">日期</text>
-    <picker mode="date" value="{{date}}" bindchange="bindDateChange">
-      <view class="picker">{{date}}</view>
+<view class="page app-bg">
+  <view class="deco-glow-tr"></view>
+
+  <view class="type-bar row">
+    <view class="type-pill {{type === 'expense' ? 'is-active' : ''}}" data-type="expense" bindtap="onTypeChange">支出</view>
+    <view class="type-pill {{type === 'income' ? 'is-active' : ''}}" data-type="income" bindtap="onTypeChange">收入</view>
+  </view>
+
+  <view class="amount-card card card-pad-lg">
+    <view class="eyebrow">NO.04 · EDIT</view>
+    <view class="amount-row">
+      <text class="amount-sign">¥</text>
+      <input
+        class="amount-input numeric"
+        type="digit"
+        value="{{amount}}"
+        placeholder="0.00"
+        placeholder-class="amount-placeholder"
+        maxlength="10"
+        bindinput="onAmountInput"
+      />
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="eyebrow section-title">分类</view>
+    <view class="cat-grid">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="cat-chip {{category === item ? 'is-active' : ''}}"
+        bindtap="onCategoryTap"
+        data-cat="{{item}}"
+      >
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="eyebrow section-title">日期</view>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange" class="picker-row card card-pad-md">
+      <text class="body">{{date}}</text>
+      <text class="picker-arrow">›</text>
     </picker>
   </view>
 
-  <view class="form-item">
-    <text class="label">金额</text>
-    <input type="digit" placeholder="0.00" bindinput="bindAmountInput" value="{{amount}}" />
+  <view class="section">
+    <view class="eyebrow section-title">备注</view>
+    <base-input
+      value="{{note}}"
+      placeholder="选填"
+      maxlength="50"
+      bind:input="onNoteInput"
+    />
   </view>
 
-  <view class="form-item">
-    <text class="label">类型</text>
-    <view class="type-selector">
-      <view class="{{type === 'expense' ? 'active' : ''}}" bindtap="selectType" data-type="expense">
-        <text>支出</text>
-      </view>
-      <view class="{{type === 'income' ? 'active' : ''}}" bindtap="selectType" data-type="income">
-        <text>收入</text>
-      </view>
-    </view>
+  <view class="submit-bar">
+    <base-button
+      block
+      size="xl"
+      variant="accent"
+      loading="{{submitting}}"
+      bind:click="onSubmit"
+    >保存修改</base-button>
+    <view class="delete-link" bindtap="onDelete">删除这笔</view>
   </view>
 
-  <view class="form-item">
-    <text class="label">分类</text>
-    <view class="category-selector">
-      <view wx:for="{{categories}}" wx:key="index" wx:for-item="cat"
-        class="{{category === cat ? 'active' : ''}}"
-        bindtap="selectCategory" data-category="{{cat}}">
-        <text>{{cat}}</text>
-      </view>
-    </view>
-  </view>
-
-  <view class="form-item">
-    <text class="label">备注</text>
-    <input type="text" placeholder="可选" bindinput="bindNoteInput" value="{{note}}" />
-  </view>
-
-  <view class="btn-group">
-    <button class="delete-btn" bindtap="deleteBill">删除</button>
-    <button class="submit-btn" type="primary" bindtap="submit">保存</button>
-  </view>
+  <view class="tabbar-safe"></view>
 </view>

@@ -1,0 +1,4 @@
+<view class="base-tag tag-{{variant}} tag-style-{{toneStyle}} tag-size-{{size}}">
+  <slot name="icon"/>
+  <view class="tag-label"><slot/></view>
+</view>

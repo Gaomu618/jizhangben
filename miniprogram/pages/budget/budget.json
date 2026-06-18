@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "base-card": "/components/base/base-card",
+    "base-button": "/components/base/base-button",
+    "base-empty": "/components/base/base-empty",
+    "base-input": "/components/base/base-input"
+  },
+  "navigationBarTitleText": "预算管理"
+}

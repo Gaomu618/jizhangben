@@ -1,0 +1,25 @@
+/* =====================================================================
+   App 全局样式 — 引入 design system（Phase 2 重做）
+   ===================================================================== */
+@import "./design/tokens.wxss";
+@import "./design/style.wxss";
+@import "./design/typography.wxss";
+@import "./design/decoration.wxss";
+@import "./design/motion.wxss";
+@import "./design/motion-classes.wxss";
+@import "./design/press-feedback.wxss";
+
+/* ==================== 全局基础 ==================== */
+page {
+  background: var(--color-bg-default);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 29rpx;
+  line-height: 1.6;
+  /* 小程序 page 默认是 100vh，安全区适配 */
+  min-height: 100vh;
+}
+
+view, text, button, input, scroll-view, image { box-sizing: border-box; }
+button { padding: 0; margin: 0; background: transparent; }
+button::after { border: none; }

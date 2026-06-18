@@ -1,0 +1,120 @@
+/* ============================================
+   Profile Setup — 完善资料页（首次登录后跳转）
+   ============================================ */
+
+.setup-page {
+  min-height: 100vh;
+  background: var(--color-bg-default);
+  padding: 80rpx 48rpx 48rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============== Hero ============== */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 48rpx;
+  z-index: 1;
+}
+.hero-eyebrow {
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--color-action-accent);
+  font-family: var(--font-num);
+}
+.hero-title {
+  font-size: 56rpx;
+  font-weight: 600;
+  color: var(--ink-900);
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  margin-top: 4rpx;
+}
+.hero-sub {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-top: 8rpx;
+}
+
+/* ============== Section ============== */
+.section {
+  margin-bottom: 40rpx;
+  position: relative;
+  z-index: 1;
+}
+.card-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 20rpx;
+  padding-left: 8rpx;
+}
+
+/* ============== 头像选择 ============== */
+.avatar-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+/* chooseAvatar button 样式（去掉默认 button 边框/背景） */
+.avatar-pickable {
+  background: var(--paper-200);
+  border: 4rpx dashed var(--color-border-soft, #e7e1d4);
+  box-shadow: none;
+  padding: 0;
+  line-height: 1;
+}
+.avatar-pickable::after { border: none; }
+.avatar-circle {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--paper-200);
+  transition: all var(--t-base) var(--ease-out);
+}
+.avatar-pickable:active { opacity: 0.7; }
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.avatar-placeholder {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+.avatar-hint {
+  font-size: 22rpx;
+}
+
+/* ============== 昵称 ============== */
+.char-count {
+  text-align: right;
+  margin-top: 8rpx;
+  padding-right: 8rpx;
+}
+
+/* ============== Actions ============== */
+.actions {
+  margin-top: 56rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+  z-index: 1;
+}
+.skip-btn {
+  padding: 16rpx 32rpx;
+  cursor: pointer;
+}
+.skip-btn:active {
+  opacity: 0.6;
+}

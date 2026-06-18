@@ -1,0 +1,42 @@
+<view class="base-input size-{{size}} variant-{{variant}} {{error ? 'has-error' : ''}} {{disabled ? 'is-disabled' : ''}}">
+  <view wx:if="{{label}}" class="input-label eyebrow">{{label}}</view>
+
+  <view class="input-wrap">
+    <view wx:if="{{prefix}}" class="input-affix prefix"><slot name="prefix"/></view>
+
+    <input
+      wx:if="{{!multiline}}"
+      class="input-inner"
+      type="{{type}}"
+      value="{{value}}"
+      placeholder="{{placeholder}}"
+      placeholder-class="input-placeholder"
+      disabled="{{disabled}}"
+      maxlength="{{maxlength}}"
+      focus="{{focus}}"
+      bindinput="onInput"
+      bindblur="onBlur"
+      bindfocus="onFocus"
+    />
+
+    <textarea
+      wx:else
+      class="input-inner"
+      value="{{value}}"
+      placeholder="{{placeholder}}"
+      placeholder-class="input-placeholder"
+      disabled="{{disabled}}"
+      maxlength="{{maxlength}}"
+      auto-height="{{!rows}}"
+      rows="{{rows}}"
+      bindinput="onInput"
+      bindblur="onBlur"
+      bindfocus="onFocus"
+    />
+
+    <view wx:if="{{suffix}}" class="input-affix suffix"><slot name="suffix"/></view>
+  </view>
+
+  <view wx:if="{{error}}" class="input-message error micro">{{error}}</view>
+  <view wx:elif="{{hint}}" class="input-message hint micro">{{hint}}</view>
+</view>

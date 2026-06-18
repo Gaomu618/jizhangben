@@ -1,4 +1,7 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "添加账单"
+  "usingComponents": {
+    "base-button": "/components/base/base-button",
+    "base-input": "/components/base/base-input"
+  },
+  "navigationBarTitleText": "记一笔"
 }

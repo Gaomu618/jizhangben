@@ -1,40 +1,292 @@
-<view class="container">
-  <view class="header">
-    <view class="month-selector">
-      <text bindtap="prevMonth">&lt;</text>
-      <text class="month-text">{{year}}年{{month}}月</text>
-      <text bindtap="nextMonth">&gt;</text>
-    </view>
-    <view class="stats-card">
-      <view class="stat-row">
-        <text>收入</text>
-        <text class="income">+{{income}}</text>
-      </view>
-      <view class="stat-row">
-        <text>支出</text>
-        <text class="expense">-{{expense}}</text>
-      </view>
-      <view class="stat-row">
-        <text>结余</text>
-        <text class="{{balance >= 0 ? 'income' : 'expense'}}">{{balance >= 0 ? '+' : ''}}{{balance}}</text>
+<view class="page app-bg">
+  <view class="deco-glow-tr"></view>
+
+  <!-- #4 统一空状态：loading / empty / error 复用同一个组件 -->
+  <base-empty-state state="{{emptyState}}" wx:if="{{emptyState && emptyState.type !== 'loading'}}" />
+
+  <!-- 1. 时间范围选择器（始终显示，让用户切区间） -->
+  <view class="section">
+    <view class="card card-pad-md">
+      <view class="eyebrow">时间范围</view>
+      <scroll-view scroll-x="true" class="range-row" enhanced show-scrollbar="{{false}}" enable-flex>
+        <view
+          wx:for="{{rangePresets}}"
+          wx:key="value"
+          class="range-chip {{activeRange === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onRangeChip"
+        >{{item.label}}</view>
+      </scroll-view>
+      <view wx:if="{{showCustom}}" class="custom-row">
+        <picker mode="date" value="{{customStart}}" bindchange="onCustomStartChange" class="custom-picker">
+          <view class="picker-cell">
+            <text class="micro text-muted">起</text>
+            <text class="picker-val {{customStart ? '' : 'text-muted'}}">{{customStart || '选择'}}</text>
+          </view>
+        </picker>
+        <text class="filter-dash">~</text>
+        <picker mode="date" value="{{customEnd}}" bindchange="onCustomEndChange" class="custom-picker">
+          <view class="picker-cell">
+            <text class="micro text-muted">止</text>
+            <text class="picker-val {{customEnd ? '' : 'text-muted'}}">{{customEnd || '选择'}}</text>
+          </view>
+        </picker>
+        <base-button variant="primary" size="sm" bind:click="applyCustom">应用</base-button>
       </view>
     </view>
   </view>
 
-  <view class="category-list">
-    <view class="title">支出分类</view>
-    <view wx:for="{{categories}}" wx:key="category" class="category-item">
-      <view class="category-left">
-        <text class="category-name">{{item.category}}</text>
-        <text class="category-percent">{{item.percent}}%</text>
+  <!-- 2. Hero 1+3 KPI 卡片 -->
+  <view wx:if="{{summary}}" class="section">
+    <view class="stats-hero-row">
+      <!-- 主卡：日均支出 -->
+      <base-card variant="dark" padding="lg" custom-class="stats-hero-main">
+        <view class="eyebrow eyebrow-ink">日均支出</view>
+        <view class="hero-value numeric text-expense">¥{{summary.avgDisplay}}</view>
+        <view wx:if="{{summary.avg_daily_delta !== null && summary.avg_daily_delta !== undefined}}" class="hero-delta {{summary.avg_daily_delta > 0 ? 'text-expense' : 'text-positive'}}">
+          {{summary.avg_daily_delta > 0 ? '↑' : '↓'}} {{summary.avg_daily_delta > 0 ? summary.avg_daily_delta : -summary.avg_daily_delta}}% vs 上期
+        </view>
+        <view wx:else class="hero-delta text-muted">首期无对比</view>
+      </base-card>
+
+      <!-- 右侧 3 个 mini 卡 -->
+      <view class="stats-hero-side">
+        <base-card padding="md" custom-class="stats-mini-card">
+          <view class="micro text-muted">最大单笔</view>
+          <view wx:if="{{summary.max_expense}}" class="mini-value numeric text-expense">¥{{summary.maxAmountDisplay}}</view>
+          <view wx:else class="mini-value numeric text-muted">-</view>
+          <view wx:if="{{summary.max_expense}}" class="mini-meta text-muted micro">{{summary.max_expense.category}} · {{summary.maxDateShort}}</view>
+          <view wx:else class="mini-meta text-muted micro">暂无</view>
+        </base-card>
+
+        <base-card padding="md" custom-class="stats-mini-card">
+          <view class="micro text-muted">最高频分类</view>
+          <view wx:if="{{summary.top_category}}" class="mini-value text-accent">{{summary.top_category.name}}</view>
+          <view wx:else class="mini-value numeric text-muted">-</view>
+          <view wx:if="{{summary.top_category}}" class="mini-meta text-muted micro">{{summary.top_category.count}}笔 · ¥{{summary.topTotalDisplay}}</view>
+          <view wx:else class="mini-meta text-muted micro">暂无</view>
+        </base-card>
+
+        <base-card padding="md" custom-class="stats-mini-card">
+          <view class="micro text-muted">笔数</view>
+          <view class="mini-value numeric">
+            <text class="text-positive">{{summary.income_count}}</text>
+            <text class="text-muted"> / </text>
+            <text class="text-expense">{{summary.expense_count}}</text>
+          </view>
+          <view class="mini-meta text-muted micro">收 / 支 · {{summary.days}}天</view>
+        </base-card>
       </view>
-      <view class="category-right">
-        <text class="category-amount">-{{item.amount}}</text>
-        <view class="progress-bar">
-          <view class="progress" style="width: {{item.percent}}%"></view>
+    </view>
+  </view>
+
+  <!-- 3. 收支对比柱状图 -->
+  <view class="section">
+    <base-card padding="md">
+      <view class="card-head">
+        <view class="eyebrow">收支对比 · 本期 vs 上期</view>
+      <base-button variant="ghost" size="sm" data-id="barChart" bind:click="onExportChart">导出</base-button>
+      </view>
+      <view class="canvas-wrap"
+        bindtouchstart="onChartTouchStart"
+        bindtouchend="onChartTouchEnd"
+        data-chart-id="barChart"
+        data-chart-type="bar">
+        <canvas type="2d" id="barChart" class="chart-canvas"></canvas>
+        <view wx:if="{{tooltip.visible && tooltip.chartId === 'barChart'}}"
+              class="chart-tooltip is-visible"
+              style="left: {{tooltip.x}}px; top: {{tooltip.y}}px;">
+          <view class="tooltip-title">{{tooltip.title}}</view>
+          <view class="tooltip-value">{{tooltip.value}}</view>
+          <view class="tooltip-sub">{{tooltip.subText}}</view>
+        </view>
+      </view>
+    </base-card>
+  </view>
+
+  <!-- 5. 6 个月趋势折线 -->
+  <view class="section">
+    <base-card padding="md">
+      <view class="card-head">
+        <view class="eyebrow">近 6 个月趋势</view>
+        <view class="legend">
+          <view class="legend-dot" style="background: #10b981;"></view><text class="micro">收入</text>
+          <view class="legend-dot" style="background: #ef4444;"></view><text class="micro">支出</text>
+          <view class="legend-dot" style="background: #4f46e5;"></view><text class="micro">结余</text>
+        </view>
+        <base-button variant="ghost" size="sm" data-id="trendChart" bind:click="onExportChart">导出</base-button>
+      </view>
+      <view class="canvas-wrap"
+        bindtouchstart="onChartTouchStart"
+        bindtouchend="onChartTouchEnd"
+        data-chart-id="trendChart"
+        data-chart-type="trend">
+        <canvas type="2d" id="trendChart" class="chart-canvas"></canvas>
+        <view wx:if="{{tooltip.visible && tooltip.chartId === 'trendChart'}}"
+              class="chart-tooltip is-visible"
+              style="left: {{tooltip.x}}px; top: {{tooltip.y}}px;">
+          <view class="tooltip-title">{{tooltip.title}}</view>
+          <view class="tooltip-value">{{tooltip.value}}</view>
+          <view class="tooltip-sub">{{tooltip.subText}}</view>
+        </view>
+      </view>
+    </base-card>
+  </view>
+
+  <!-- 7. 收支占比环形图 -->
+  <view class="section">
+    <base-card padding="md">
+      <view class="card-head row between">
+        <view class="eyebrow">收支占比</view>
+        <base-button variant="ghost" size="sm" data-id="ratioDonut" bind:click="onExportChart">导出</base-button>
+      </view>
+      <canvas type="2d" id="ratioDonut" class="chart-canvas"></canvas>
+    </base-card>
+  </view>
+
+  <!-- 8+9. 收入/支出分类饼图（同一卡片，上下排列） -->
+  <view class="section">
+    <base-card padding="md">
+      <!-- 收入 -->
+      <view class="pie-block">
+        <view class="card-head row between">
+          <view class="eyebrow">收入分类</view>
+          <base-button variant="ghost" size="sm" data-id="incomePie" bind:click="onExportChart">导出</base-button>
+        </view>
+        <view class="canvas-wrap"
+        bindtouchstart="onChartTouchStart"
+        bindtouchend="onChartTouchEnd"
+        data-chart-id="incomePie"
+        data-chart-type="pie">
+        <canvas type="2d" id="incomePie" class="chart-canvas-pie" data-pie-id="incomePie"></canvas>
+        <view wx:if="{{tooltip.visible && tooltip.chartId === 'incomePie'}}"
+              class="chart-tooltip is-visible"
+              style="left: {{tooltip.x}}px; top: {{tooltip.y}}px;">
+          <view class="tooltip-title">{{tooltip.title}}</view>
+          <view class="tooltip-value">{{tooltip.value}}</view>
+          <view class="tooltip-sub">{{tooltip.subText}}</view>
+        </view>
+      </view>
+      </view>
+      <view class="pie-divider"></view>
+      <!-- 支出 -->
+      <view class="pie-block">
+        <view class="card-head row between">
+          <view class="eyebrow">支出分类</view>
+          <base-button variant="ghost" size="sm" data-id="expensePie" bind:click="onExportChart">导出</base-button>
+        </view>
+        <view class="canvas-wrap"
+        bindtouchstart="onChartTouchStart"
+        bindtouchend="onChartTouchEnd"
+        data-chart-id="expensePie"
+        data-chart-type="pie">
+        <canvas type="2d" id="expensePie" class="chart-canvas-pie" data-pie-id="expensePie"></canvas>
+        <view wx:if="{{tooltip.visible && tooltip.chartId === 'expensePie'}}"
+              class="chart-tooltip is-visible"
+              style="left: {{tooltip.x}}px; top: {{tooltip.y}}px;">
+          <view class="tooltip-title">{{tooltip.title}}</view>
+          <view class="tooltip-value">{{tooltip.value}}</view>
+          <view class="tooltip-sub">{{tooltip.subText}}</view>
+        </view>
+      </view>
+      </view>
+    </base-card>
+  </view>
+
+  <!-- 8. 支出分类排行 -->
+  <view class="section">
+    <base-card padding="md">
+      <view class="eyebrow">支出分类排行 · TOP 8<base-button variant="ghost" size="sm" data-id="expenseBar" bind:click="onExportChart">导出</base-button>
+      </view>
+      <view class="canvas-wrap"
+        bindtouchstart="onChartTouchStart"
+        bindtouchend="onChartTouchEnd"
+        data-chart-id="expenseBar"
+        data-chart-type="expenseBar">
+        <canvas type="2d" id="expenseBar" class="chart-canvas-lg"></canvas>
+        <view wx:if="{{tooltip.visible && tooltip.chartId === 'expenseBar'}}"
+              class="chart-tooltip is-visible"
+              style="left: {{tooltip.x}}px; top: {{tooltip.y}}px;">
+          <view class="tooltip-title">{{tooltip.title}}</view>
+          <view class="tooltip-value">{{tooltip.value}}</view>
+          <view class="tooltip-sub">{{tooltip.subText}}</view>
+        </view>
+      </view>
+    </base-card>
+  </view>
+
+  <!-- 9. 预算概览 -->
+  <view class="section">
+    <base-card padding="md">
+      <view class="card-head row between">
+        <view class="eyebrow">本月预算</view>
+        <base-button wx:if="{{budgetList.length > 0}}" variant="ghost" size="sm" bind:click="onOpenBudget">前往设置</base-button>
+      </view>
+      <block wx:if="{{budgetList.length > 0}}">
+        <view wx:for="{{budgetList}}" wx:key="category" class="budget-row">
+          <text class="budget-cat">{{item.category}}</text>
+          <view class="budget-bar">
+            <view class="budget-bar-fill" style="width: {{item.widthStyle}}; background: {{item.bgStyle}}"></view>
+          </view>
+          <text class="budget-amount numeric {{item.percent >= 80 ? 'text-expense' : ''}}">
+            ¥{{item.spentRmb}}<text class="muted-sm">/¥{{item.budgetRmb}}</text>
+          </text>
+        </view>
+      </block>
+      <base-empty
+        wx:else
+        title="本月还没有设置预算"
+        message="设置预算后，超支时会有提示"
+      >
+        <base-button variant="primary" size="sm" slot="cta" bind:click="onOpenBudget">前往设置</base-button>
+      </base-empty>
+    </base-card>
+  </view>
+
+  <!-- 10. TOP 5 最高支出 -->
+  <view wx:if="{{topList.length > 0}}" class="section">
+    <base-card padding="md">
+      <view class="eyebrow">最高支出 TOP {{topList.length}}</view>
+      <view class="top-list">
+        <view wx:for="{{topList}}" wx:key="id" class="top-item {{item.rankClass}}">
+          <view class="top-rank">{{index + 1}}</view>
+          <text class="top-emoji">{{categoryEmojis[item.category] || '📝'}}</text>
+          <view class="top-info col">
+            <text class="top-title">{{item.note || item.category}}</text>
+            <text class="top-meta micro text-muted">{{item.category}} · {{item.dateShort}}</text>
+          </view>
+          <text class="top-amount numeric text-expense">¥{{item.amountRmb}}</text>
+        </view>
+      </view>
+    </base-card>
+  </view>
+
+  <!-- 11. 详情弹窗（点击热力图/饼图/柱图时） -->
+  <view wx:if="{{detailModal.show}}" class="modal-mask" bindtap="closeDetail">
+    <view class="modal-card" catchtap="">
+      <view class="modal-head row between">
+        <text class="modal-title">{{detailModal.title}}</text>
+        <text class="modal-close" catchtap="closeDetail">×</text>
+      </view>
+      <text class="micro text-muted">共 {{detailModal.records.length}} 条</text>
+      <view wx:if="{{detailModal.loading}}" class="modal-loading micro text-muted">加载中…</view>
+      <block wx:elif="{{detailModal.records.length === 0}}">
+        <view class="modal-empty micro text-muted">没有记录</view>
+      </block>
+      <view wx:else class="detail-list">
+        <view wx:for="{{detailModal.records}}" wx:key="id" class="detail-item">
+          <text class="detail-emoji">{{categoryEmojis[item.category] || '📝'}}</text>
+          <view class="detail-info col">
+            <text class="detail-title">{{item.note || item.category}}</text>
+            <text class="detail-meta micro text-muted">{{item.category}} · {{item.date}}</text>
+          </view>
+          <text class="detail-amount numeric {{item.type === 'income' ? 'text-positive' : 'text-expense'}}">
+            {{item.type === 'income' ? '+' : '-'}}¥{{item.amountDisplay}}
+          </text>
         </view>
       </view>
     </view>
-    <view wx:if="{{categories.length === 0}}" class="empty">暂无数据</view>
   </view>
+
+  <view class="tabbar-safe"></view>
 </view>

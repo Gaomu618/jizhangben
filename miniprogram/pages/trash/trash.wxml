@@ -1,0 +1,110 @@
+<view class="page app-bg">
+  <view class="deco-glow-tr"></view>
+
+  <!-- 筛选条（始终可见） -->
+  <view class="filters card card-pad-md">
+    <view class="eyebrow">筛选 · FILTER</view>
+    <view class="filter-row">
+      <picker mode="date" value="{{filters.start}}" bindchange="onStartChange" class="filter-cell">
+        <view class="picker-row">
+          <text class="filter-label">开始</text>
+          <text class="picker-val {{filters.start ? '' : 'text-muted'}}">{{filters.start || '不限'}}</text>
+        </view>
+      </picker>
+      <text class="filter-dash">~</text>
+      <picker mode="date" value="{{filters.end}}" bindchange="onEndChange" class="filter-cell">
+        <view class="picker-row">
+          <text class="filter-label">结束</text>
+          <text class="picker-val {{filters.end ? '' : 'text-muted'}}">{{filters.end || '不限'}}</text>
+        </view>
+      </picker>
+    </view>
+    <view class="filter-row">
+      <picker mode="selector" range="{{categoryList}}" value="{{categoryIndex}}" bindchange="onCategoryChange" class="filter-cell">
+        <view class="picker-row">
+          <text class="filter-label">分类</text>
+          <text class="picker-val {{filters.category ? '' : 'text-muted'}}">{{filters.category || '全部分类'}}</text>
+        </view>
+      </picker>
+      <view wx:if="{{hasActiveFilter}}" class="filter-clear" bindtap="clearFilter">清除</view>
+    </view>
+  </view>
+
+  <!-- 顶部操作栏（列表非空时） -->
+  <view wx:if="{{trashList.length > 0}}" class="action-bar">
+    <base-button variant="ghost" size="sm" bind:click="onRestoreAll">还原全部</base-button>
+    <base-button variant="danger" size="sm" bind:click="onEmpty">清空回收站</base-button>
+  </view>
+
+  <!-- 列表 / 空状态 -->
+  <view class="section">
+    <block wx:if="{{trashList.length > 0}}">
+      <view
+        wx:for="{{trashList}}"
+        wx:key="id"
+        class="trash-item card card-pad-md"
+        bindtap="toggleDetail"
+        data-id="{{item.id}}"
+        hover-class="trash-item-hover"
+      >
+        <view class="trash-head row between">
+          <view class="trash-left col">
+            <view class="trash-title h-list">
+              <text class="trash-emoji">{{categoryEmojis[item.category] || '📝'}}</text>
+              {{item.note || item.category}}
+            </view>
+            <view class="micro text-muted">
+              <text class="{{item.type === 'income' ? 'text-positive' : 'text-expense'}}">
+                {{item.type === 'income' ? '+' : '-'}}¥{{item.amount}}
+              </text>
+              · {{item.category}} · {{item.date}}
+            </view>
+          </view>
+          <view class="trash-actions" catchtap="">
+            <base-button variant="ghost" size="sm" data-id="{{item.id}}" bind:click="onRestore">还原</base-button>
+            <base-button variant="danger" size="sm" data-id="{{item.id}}" bind:click="onPurge">删除</base-button>
+          </view>
+        </view>
+
+        <view wx:if="{{expandedId === item.id}}" class="trash-detail">
+          <view class="trash-detail-row">
+            <text class="text-muted">类型</text>
+            <text class="{{item.type === 'income' ? 'text-positive' : 'text-expense'}}">
+              {{item.type === 'income' ? '收入' : '支出'}}
+            </text>
+          </view>
+          <view class="trash-detail-row">
+            <text class="text-muted">分类</text>
+            <text>{{item.category}}</text>
+          </view>
+          <view class="trash-detail-row">
+            <text class="text-muted">金额</text>
+            <text class="numeric {{item.type === 'income' ? 'text-positive' : 'text-expense'}}" style="font-weight: 600;">
+              ¥{{item.amount}}
+            </text>
+          </view>
+          <view class="trash-detail-row">
+            <text class="text-muted">日期</text>
+            <text class="numeric">{{item.date}}</text>
+          </view>
+          <view wx:if="{{item.note}}" class="trash-detail-row">
+            <text class="text-muted">备注</text>
+            <text>{{item.note}}</text>
+          </view>
+          <view class="trash-detail-row">
+            <text class="text-muted">删除时间</text>
+            <text class="numeric micro">{{item.deleted_at}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <base-empty
+      wx:else
+      title="回收站是空的"
+      message="删除的记录会保留 30 天，到期自动清理"
+    />
+  </view>
+
+  <view class="tabbar-safe"></view>
+</view>

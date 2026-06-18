@@ -1,25 +1,45 @@
-<view class="container">
-  <view class="title">个人记账</view>
-  <button class="login-btn" type="primary" bindtap="wechatLogin">微信登录</button>
-</view>
+<view class="login-page">
+  <!-- 背景装饰：双光晕（暖色 + 冷色） -->
+  <view class="deco-glow-tr"></view>
+  <view class="deco-glow-bl"></view>
 
-<style>
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 100rpx;
-}
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 100rpx;
-  color: #333;
-}
-.login-btn {
-  width: 80%;
-  background-color: #07c160;
-}
-</style>
+  <!-- Hero 区：Logo + 标题 + 副标 -->
+  <view class="hero motion-zoom-in">
+    <view class="logo-circle">
+      <text class="logo-emoji">💰</text>
+    </view>
+    <view class="h-page motion-slide-down motion-slide-down-base">个人<em>记账</em></view>
+    <view class="hero-sub motion-fade-in motion-fade-in-slow">记录每一笔 · 看清生活</view>
+  </view>
+
+  <!-- 信任标识 -->
+  <view class="trust-row motion-fade-in motion-fade-in-slow">
+    <view class="trust-item">
+      <text class="trust-icon">🔒</text>
+      <text class="trust-text">微信官方授权</text>
+    </view>
+    <view class="trust-divider"></view>
+    <view class="trust-item">
+      <text class="trust-icon">☁️</text>
+      <text class="trust-text">数据云端同步</text>
+    </view>
+  </view>
+
+  <!-- 登录按钮 + 协议 -->
+  <view class="login-section motion-slide-up motion-slide-up-slow">
+    <base-button
+      block
+      size="lg"
+      variant="primary"
+      loading="{{loading}}"
+      hover-class="btn-active"
+      bind:click="onWechatLogin"
+    >
+      微信一键登录
+    </base-button>
+
+    <view class="login-agreement micro text-muted">
+      登录即代表同意 <text class="text-accent">《服务协议》</text> 与 <text class="text-accent">《隐私政策》</text>
+    </view>
+  </view>
+</view>

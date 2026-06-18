@@ -1,0 +1,15 @@
+<view class="dock">
+  <view
+    wx:for="{{tabs}}"
+    wx:key="pagePath"
+    class="dock-item {{selected === index ? 'dock-item-active' : ''}}"
+    data-index="{{index}}"
+    data-url="{{item.pagePath}}"
+    bindtap="onTap"
+    hover-class="dock-item-hover"
+    hover-stay-time="60"
+  >
+    <image class="dock-icon" src="{{selected === index ? item.active : item.normal}}" mode="aspectFit"/>
+    <text class="dock-label">{{item.text}}</text>
+  </view>
+</view>

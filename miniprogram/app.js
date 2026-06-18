@@ -2,7 +2,7 @@ App({
   globalData: {
     token: '',
     userinfo: null,
-    baseUrl: 'https://cradle-sustained-suds.ngrok-free.dev/api'
+    baseUrl: 'https://cradle-sustained-suds.ngrok-free.dev'
   },
   onLaunch() {
     const token = wx.getStorageSync('token')

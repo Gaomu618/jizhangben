@@ -1,0 +1,3 @@
+<view class="eyebrow {{variant === 'accent' ? 'eyebrow-accent' : ''}} {{variant === 'ink' ? 'eyebrow-ink' : ''}}">
+  <slot/>
+</view>

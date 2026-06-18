@@ -1,47 +1,309 @@
-<view class="container">
-  <view class="header">
-    <view class="month-selector">
-      <text bindtap="prevMonth">&lt;</text>
-      <text class="month-text">{{year}}年{{month}}月</text>
-      <text bindtap="nextMonth">&gt;</text>
+<view class="page app-bg">
+  <!-- 顶部装饰光晕 -->
+  <view class="deco-glow-tr"></view>
+
+  <!-- 1. 月份切换 + 余额大数字 -->
+  <view class="hero">
+    <view class="month-bar">
+      <view class="month-btn" bindtap="prevMonth">‹</view>
+      <view class="month-label h-card">{{year}}年{{month}}月</view>
+      <view class="month-btn" bindtap="nextMonth">›</view>
     </view>
-    <view class="stats">
-      <view class="stat-item">
-        <text class="label">收入</text>
-        <text class="income">+{{income}}</text>
+
+    <!-- 预算/活跃度提醒 banner（应用内主动通知，无需订阅消息） -->
+    <view
+      wx:if="{{alertBanner}}"
+      class="alert-banner alert-banner--{{alertBanner.level}}"
+      hover-class="alert-banner-hover"
+    >
+      <text class="alert-icon">{{alertBanner.icon}}</text>
+      <view class="alert-content" bindtap="onTapAlertBanner" data-type="{{alertBanner.ruleType}}">
+        <text class="alert-title">{{alertBanner.title}}</text>
+        <text class="alert-msg">{{alertBanner.message}}</text>
       </view>
-      <view class="stat-item">
-        <text class="label">支出</text>
-        <text class="expense">-{{expense}}</text>
+      <view class="alert-dismiss" hover-class="alert-dismiss-hover" catchtap="onDismissAlertBanner">×</view>
+    </view>
+
+    <view class="balance-card card card-pad-lg">
+      <view class="eyebrow eyebrow-accent">NO.02 · BALANCE</view>
+      <view class="balance-amount numeric num-in">
+        <text class="num-sign">¥</text>{{balance}}
       </view>
-      <view class="stat-item">
-        <text class="label">结余</text>
-        <text class="{{balance >= 0 ? 'income' : 'expense'}}">{{balance >= 0 ? '+' : ''}}{{balance}}</text>
+      <view class="balance-row row between">
+        <view class="balance-cell">
+          <view class="micro text-muted">收入</view>
+          <view class="num-cell text-income numeric">+{{income}}</view>
+        </view>
+        <view class="divider-v"></view>
+        <view class="balance-cell">
+          <view class="micro text-muted">支出</view>
+          <view class="num-cell text-expense numeric">-{{expense}}</view>
+        </view>
+      </view>
+
+      <!-- 预算进度条（已设预算时显示） -->
+      <view wx:if="{{budgets.length > 0}}" class="budget-list">
+        <view
+          wx:for="{{budgets}}"
+          wx:key="category"
+          class="budget-row"
+        >
+          <text class="budget-cat">{{item.category}}</text>
+          <view class="budget-bar">
+            <view
+              class="budget-bar-fill"
+              style="width: {{item.widthStyle}}; background: {{item.bgStyle}};"
+            ></view>
+          </view>
+          <text class="budget-amount numeric {{item.percent >= 80 ? 'text-expense' : ''}}">
+            ¥{{item.spentRmb}}<text class="muted-sm">/¥{{item.budgetRmb}}</text>
+          </text>
+        </view>
+      </view>
+
+      <!-- 未设预算提示 -->
+      <view wx:if="{{unbudgetedCategories.length > 0}}" class="budget-hint" bindtap="onOpenBudget">
+        <text class="micro">
+          还有 <text class="hint-num">{{unbudgetedCategories.length}}</text> 个分类未设预算：
+          <text class="hint-cat">{{unbudgetedHint}}</text>
+          <text class="text-accent">前往设置 →</text>
+        </text>
       </view>
     </view>
   </view>
 
-  <view class="bill-list">
-    <block wx:for="{{bills}}" wx:key="id">
-      <view class="bill-item" bindtap="editBill" data-id="{{item.id}}">
-        <view class="bill-left">
-          <view class="bill-category">{{item.category}}</view>
-          <view class="bill-note">{{item.note || ''}}</view>
+  <!-- 2. 账单列表 -->
+  <view class="bills">
+    <view class="bills-head row between">
+      <view class="eyebrow">明细</view>
+      <view class="bills-head-actions">
+        <view class="head-btn" hover-class="head-btn-hover" bindtap="onImportBill">
+          <text class="head-btn-icon">↑</text>
+          <text class="head-btn-text">导入账单</text>
         </view>
-        <view class="bill-right">
-          <text class="bill-amount {{item.type === 'income' ? 'income' : 'expense'}}">
-            {{item.type === 'income' ? '+' : '-'}}{{item.amount}}
-          </text>
-          <text class="bill-date">{{item.date}}</text>
+        <view class="micro text-muted">共 {{bills.length}} 笔</view>
+      </view>
+    </view>
+
+    <block wx:if="{{bills.length > 0}}">
+      <!-- 单条账单的左滑行（容器 = swipe-row，内部分 content + actions） -->
+      <view
+        wx:for="{{bills}}"
+        wx:key="id"
+        class="swipe-row {{item.swipeOpen ? 'is-open' : ''}}"
+        data-idx="{{index}}"
+        data-id="{{item.id}}"
+        bindtap="onSwipeRowTap"
+      >
+        <!-- 账单本体：可左右拖动 -->
+        <view
+          class="swipe-content {{isSwiping ? 'is-dragging' : ''}}"
+          style="transform: translateX({{item.swipeX || 0}}rpx);"
+          data-idx="{{index}}"
+          bindtouchstart="onSwipeStart"
+          bindtouchmove="onSwipeMove"
+          bindtouchend="onSwipeEnd"
+          catchtap="onSwipeContentTap"
+        >
+          <view class="bill-item card card-pad-md" hover-class="bill-item-hover">
+            <view class="bill-left col">
+              <view class="bill-cat h-list">{{item.category}}</view>
+              <view wx:if="{{item.note}}" class="bill-note micro text-muted">{{item.note}}</view>
+            </view>
+            <view class="bill-right col" style="align-items: flex-end;">
+              <view class="bill-amount numeric {{item.type === 'income' ? 'text-income' : 'text-expense'}}">
+                {{item.type === 'income' ? '+' : '-'}}{{item.amount}}
+              </view>
+              <view class="bill-date micro text-muted">{{item.date}}</view>
+            </view>
+          </view>
+        </view>
+        <!-- 滑出按钮：编辑 + 删除（绝对定位，在账单本体下方） -->
+        <view class="swipe-actions">
+          <view
+            class="swipe-action swipe-action--edit"
+            data-id="{{item.id}}"
+            catchtap="onSwipeEdit"
+          >
+            <text class="swipe-action-icon">✎</text>
+            <text>编辑</text>
+          </view>
+          <view
+            class="swipe-action swipe-action--delete"
+            data-id="{{item.id}}"
+            catchtap="onSwipeDelete"
+          >
+            <text class="swipe-action-icon">🗑</text>
+            <text>删除</text>
+          </view>
         </view>
       </view>
     </block>
-    <view wx:if="{{bills.length === 0}}" class="empty">暂无记录</view>
+
+    <base-empty
+      wx:else
+      title="这个月还没有记录"
+      message="点右下角「+」开始你的第一笔"
+    />
   </view>
 
-  <view class="bottom-bar">
-    <navigator url="/pages/stats/stats" class="nav-item">统计</navigator>
-    <navigator url="/pages/add/add" class="nav-item add-btn">+记账</navigator>
-    <navigator url="/pages/mine/mine" class="nav-item">我的</navigator>
+  <!-- 占位，避免被 dock / FAB 遮住 -->
+  <view class="tabbar-safe tabbar-safe--with-fab"></view>
+
+  <!-- 悬浮记一笔按钮 -->
+  <view class="fab" hover-class="fab-active" bindtap="goAdd" hover-stay-time="80">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- ================ 编辑账单弹窗（左滑"编辑"触发）================ -->
+  <view wx:if="{{editModal.visible}}" class="edit-modal-mask" bindtap="onEditModalMaskTap">
+    <view class="edit-modal-card" catchtap="">
+      <view class="edit-modal-head">
+        <text class="edit-modal-title">编辑账单</text>
+        <text class="edit-modal-close" catchtap="onCloseEditModal">×</text>
+      </view>
+
+      <!-- 类型切换 -->
+      <view class="edit-modal-type row">
+        <view
+          class="edit-type-pill {{editModal.type === 'expense' ? 'is-active' : ''}}"
+          data-type="expense"
+          catchtap="onEditTypeChange"
+        >支出</view>
+        <view
+          class="edit-type-pill {{editModal.type === 'income' ? 'is-active' : ''}}"
+          data-type="income"
+          catchtap="onEditTypeChange"
+        >收入</view>
+      </view>
+
+      <!-- 金额 -->
+      <view class="edit-amount-row">
+        <text class="edit-amount-sign">¥</text>
+        <input
+          class="edit-amount-input numeric"
+          type="digit"
+          value="{{editModal.amount}}"
+          placeholder="0.00"
+          maxlength="10"
+          catchtap=""
+          bindinput="onEditAmountInput"
+        />
+      </view>
+
+      <!-- 分类 -->
+      <view class="edit-cat-grid">
+        <view
+          wx:for="{{editModal.categories}}"
+          wx:key="*this"
+          class="edit-cat-chip {{editModal.category === item ? 'is-active' : ''}}"
+          data-cat="{{item}}"
+          catchtap="onEditCategoryTap"
+        >{{item}}</view>
+      </view>
+
+      <!-- 日期 + 备注 -->
+      <view class="edit-meta-row">
+        <picker mode="date" value="{{editModal.date}}" bindchange="onEditDateChange" class="edit-picker">
+          <text class="edit-meta-text">{{editModal.date}}</text>
+        </picker>
+      </view>
+      <view class="edit-meta-row">
+        <input
+          class="edit-note-input"
+          value="{{editModal.note}}"
+          placeholder="备注（选填）"
+          maxlength="50"
+          bindinput="onEditNoteInput"
+        />
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="edit-modal-actions">
+        <view class="edit-action edit-action--cancel" catchtap="onCloseEditModal">取消</view>
+        <view
+          class="edit-action edit-action--save {{editModal.submitting ? 'is-loading' : ''}}"
+          catchtap="onEditSave"
+        >{{editModal.submitting ? '保存中...' : '保存'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导入预览弹窗 -->
+  <view wx:if="{{importPreview.visible}}" class="modal-mask" bindtap="onClosePreview">
+    <view class="modal-card" catchtap="">
+      <view class="modal-title">导入预览</view>
+
+      <view wx:if="{{importPreview.loading}}" class="modal-loading">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">{{importPreview.loadingText || '解析中...'}}</text>
+      </view>
+
+      <block wx:elif="{{importPreview.error}}">
+        <view class="modal-error">
+          <text class="error-icon">!</text>
+          <text class="error-text">{{importPreview.error}}</text>
+        </view>
+        <view class="modal-actions">
+          <button class="modal-btn modal-btn--primary" bindtap="onClosePreview">知道了</button>
+        </view>
+      </block>
+
+      <block wx:elif="{{importPreview.done}}">
+        <view class="modal-summary">
+          <view class="summary-row">
+            <text class="summary-label">识别到</text>
+            <text class="summary-num summary-num--accent">{{importPreview.total}}</text>
+            <text class="summary-label">笔</text>
+          </view>
+          <view class="summary-row">
+            <text class="summary-label">跳过重复/退款</text>
+            <text class="summary-num">{{importPreview.duplicate}}</text>
+            <text class="summary-label">笔</text>
+          </view>
+          <view wx:if="{{importPreview.errors.length > 0}}" class="summary-row summary-warn">
+            <text class="summary-label">解析失败</text>
+            <text class="summary-num">{{importPreview.errors.length}}</text>
+            <text class="summary-label">笔</text>
+          </view>
+        </view>
+
+        <scroll-view class="modal-list" scroll-y>
+          <view
+            wx:for="{{importPreview.preview}}"
+            wx:key="date"
+            wx:for-index="idx"
+            class="modal-item"
+          >
+            <view class="modal-item-left">
+              <view class="modal-item-date">{{item.date}}</view>
+              <view class="modal-item-cat">{{item.category}}</view>
+            </view>
+            <view class="modal-item-right {{item.type === 'income' ? 'text-income' : 'text-expense'}}">
+              {{item.type === 'income' ? '+' : '-'}}¥{{item.amount}}
+            </view>
+          </view>
+        </scroll-view>
+
+        <view wx:if="{{importPreview.errors.length > 0}}" class="modal-errors">
+          <view class="errors-title">部分行解析失败：</view>
+          <view wx:for="{{importPreview.errors}}" wx:key="*this" class="errors-item">
+            · {{item}}
+          </view>
+        </view>
+
+        <view class="modal-actions">
+          <button class="modal-btn modal-btn--ghost" bindtap="onClosePreview">取消</button>
+          <button
+            class="modal-btn modal-btn--primary"
+            bindtap="onConfirmImport"
+            disabled="{{importPreview.total === 0 || importPreview.submitting}}"
+            loading="{{importPreview.submitting}}"
+          >
+            导入 {{importPreview.total}} 笔
+          </button>
+        </view>
+      </block>
+    </view>
   </view>
 </view>

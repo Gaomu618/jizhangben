@@ -1,0 +1,136 @@
+/* =====================================================================
+   Global Styles — 工具类（card / btn / text / input / eyebrow）
+   从 frontend/src/style.css 翻译。
+   ===================================================================== */
+@import "./tokens.wxss";
+@import "./typography.wxss";
+
+/* ==================== 基础重置 ==================== */
+page {
+  font-family: var(--font-body);
+  background: var(--page-bg);
+  color: var(--color-text-primary);
+  font-size: 29rpx;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, button, input, scroll-view { box-sizing: border-box; }
+
+/* 页面级暖底背景 */
+.app-bg { background: var(--color-bg-default); min-height: 100vh; }
+
+/* ==================== 卡片 ==================== */
+.card {
+  background: var(--card-bg);
+  border: 2rpx solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 32rpx;
+}
+.card-strong {
+  background: var(--card-bg);
+  border: 2rpx solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 40rpx;
+  box-shadow: var(--shadow-sm);
+}
+.card-flat {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  padding: 32rpx;
+}
+
+/* ==================== 文字颜色 ==================== */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-income { color: var(--color-feedback-positive); }
+.text-expense { color: var(--color-feedback-negative); }
+.text-accent { color: var(--color-action-accent); }
+.text-warn { color: var(--color-feedback-warning); }
+.text-inverse { color: var(--color-text-inverse); }
+
+/* ==================== 按钮（基类，配合 .btn-primary/.btn-accent/.btn-ghost 等） ==================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  background: var(--card-bg);
+  border: 2rpx solid var(--card-border);
+  color: var(--color-text-primary);
+  border-radius: var(--btn-radius-sm);
+  padding: 16rpx 28rpx;
+  font-size: 28rpx;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--t-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn::after { border: none; }  /* 微信 button 默认边框去掉 */
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-primary:disabled,
+.btn-primary.btn-disabled {
+  background: var(--muted-2);
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.btn-accent {
+  background: var(--btn-accent-bg);
+  color: var(--color-text-inverse);
+  border: none;
+  box-shadow: 0 8rpx 28rpx rgba(217, 79, 30, 0.25);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+}
+.btn-soft {
+  background: var(--paper-200);
+  color: var(--color-text-primary);
+  border: none;
+}
+
+.btn-block { display: flex; width: 100%; }
+.btn-sm { padding: 8rpx 20rpx; font-size: 26rpx; min-height: 56rpx; }
+.btn-md { padding: 16rpx 32rpx; font-size: 28rpx; min-height: 72rpx; }
+.btn-lg { padding: 24rpx 40rpx; font-size: 32rpx; min-height: 88rpx; }
+
+/* ==================== 输入 ==================== */
+.input {
+  background: var(--input-bg);
+  border: 2rpx solid var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  width: 100%;
+  min-height: 72rpx;
+}
+.input-placeholder { color: var(--color-text-muted); }
+
+/* ==================== 间距 ==================== */
+.row { display: flex; flex-direction: row; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.between { justify-content: space-between; }
+.center { justify-content: center; align-items: center; }
+.gap-4 { gap: 8rpx; }
+.gap-8 { gap: 16rpx; }
+.gap-12 { gap: 24rpx; }
+.gap-16 { gap: 32rpx; }
+.gap-24 { gap: 48rpx; }
+
+/* ==================== 文字类（与 typography.wxss 配合） ==================== */
+.mono { font-family: var(--font-mono); font-feature-settings: 'tnum'; }
+.display { font-family: var(--font-display); font-weight: 500; }
+.numeric { font-family: var(--font-num); letter-spacing: -0.02em; }

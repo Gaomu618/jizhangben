@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "base-card": "/components/base/base-card"
+  },
   "navigationBarTitleText": "我的"
 }

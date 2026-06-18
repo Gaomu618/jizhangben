@@ -1,0 +1,58 @@
+/* 浮动 dock：底部居中、圆角胶囊、阴影投射 */
+
+.dock {
+  position: fixed;
+  /* 离屏幕底部 32rpx + 安全区（iPhone 底部 home indicator） */
+  bottom: calc(32rpx + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600rpx;
+  max-width: calc(100vw - 96rpx);
+  height: 104rpx;
+  padding: 8rpx;
+  background: var(--card-bg, #ffffff);
+  border: 1rpx solid var(--color-border-soft, #efe9dc);
+  border-radius: 52rpx;
+  box-shadow: var(--shadow-lg, 0 16rpx 40rpx -8rpx rgba(15, 23, 42, 0.12));
+  display: flex;
+  align-items: center;
+  z-index: 100;
+}
+
+.dock-item {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  border-radius: 44rpx;
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+.dock-item-hover {
+  background: var(--paper-200, #f3ede4);
+}
+
+.dock-item-active {
+  background: var(--paper-200, #f3ede4);
+}
+
+.dock-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.dock-label {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: var(--color-text-muted, #9a9081);
+  letter-spacing: 0.02em;
+  transition: color var(--t-fast) var(--ease-out);
+}
+
+.dock-item-active .dock-label {
+  color: var(--color-action-accent, #d94f1e);
+  font-weight: 600;
+}

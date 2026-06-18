@@ -1,0 +1,90 @@
+/* ============================================
+   Press Feedback — 图表卡片按下反馈
+   触碰时轻微下沉，松开弹回
+   用法: class="chart-card" + bindtouchstart/End
+   ============================================ */
+
+/* 图表卡片基础样式 */
+.chart-card {
+  transition: transform var(--t-fast) var(--ease-out),
+              box-shadow var(--t-fast) var(--ease-out);
+  will-change: transform;
+}
+
+/* 按下状态：缩 + 阴影加重 */
+.chart-card.is-pressed {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-md);
+  transition-duration: 80ms;  /* 按下响应要快 */
+}
+
+/* 松开状态：弹回（轻微 overshoot） */
+@keyframes press-bounce-back {
+  0%   { transform: scale(0.98); }
+  60%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}
+.chart-card.is-bounce {
+  animation: press-bounce-back 220ms var(--ease-out);
+}
+
+/* 数据点高亮时的元素：缩放 + 描边 */
+.chart-highlight {
+  filter: drop-shadow(0 0 8rpx var(--color-action-accent, #d94f1e));
+  transform: scale(1.1);
+  transition: transform var(--t-fast) var(--ease-out);
+}
+
+/* Tooltip 容器 */
+.chart-tooltip {
+  position: absolute;
+  background: var(--ink-900, #0f172a);
+  color: #fff;
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  line-height: 1.4;
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  pointer-events: none;  /* 不挡触摸 */
+  min-width: 120rpx;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, -100%) scale(0.9);
+  transition: opacity var(--t-fast) var(--ease-out),
+              transform var(--t-fast) var(--ease-out);
+}
+.chart-tooltip.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -100%) scale(1);
+}
+.chart-tooltip .tooltip-title {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 4rpx;
+}
+.chart-tooltip .tooltip-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  font-family: var(--font-num);
+  letter-spacing: -0.01em;
+}
+.chart-tooltip .tooltip-sub {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4rpx;
+}
+
+/* Tooltip 指向数据点的箭头 */
+.chart-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+  border-top: 8rpx solid var(--ink-900, #0f172a);
+}

@@ -1,0 +1,83 @@
+/* =====================================================================
+   Motion — 动效（统一 curve / duration / reduced-motion 兼容）
+   规范：transition 统一 .2s cubic-bezier(0.16, 1, 0.3, 1)
+   ===================================================================== */
+
+/* 全局：上浮（hover 卡片） */
+.lift {
+  transition: transform var(--t-base) var(--ease-out), box-shadow var(--t-base) var(--ease-out);
+}
+.lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+/* 描边变深（hover 边框） */
+.deepen {
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.deepen:hover { border-color: var(--muted-2); background: var(--paper-50); }
+
+/* 扫光（hover 卡片：功能性装饰） */
+.sheen {
+  position: relative;
+  overflow: hidden;
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform var(--t-slow) var(--ease-out);
+  pointer-events: none;
+}
+.sheen:hover::after { transform: translateX(100%); }
+
+/* Vue transition 预设 */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
+}
+.slide-enter-from { opacity: 0; transform: translateX(-12px); }
+.slide-leave-to   { opacity: 0; transform: translateX(12px); }
+
+.scale-enter-active, .scale-leave-active {
+  transition: opacity var(--t-base) var(--ease-out), transform var(--t-base) var(--ease-out);
+}
+.scale-enter-from, .scale-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+
+/* 数字 count-up（功能性：动效只为辅助理解） */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.count-up { animation: count-up var(--t-slow) var(--ease-out) both; }
+
+/* 旋转：仅用于 spinner，禁止用于装饰 */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--line);
+  border-top-color: var(--color-action-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

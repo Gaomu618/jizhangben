@@ -1,0 +1,13 @@
+<button
+  class="btn btn-{{variant}} btn-{{size}} {{block ? 'btn-block' : ''}} {{iconOnly ? 'btn-icon-only' : ''}} {{loading ? 'is-loading' : ''}} {{customClass}}"
+  style="{{customStyle}}"
+  disabled="{{disabled || loading}}"
+  open-type="{{openType}}"
+  hover-class="btn-active"
+  hover-stay-time="80"
+  bindtap="onTap"
+>
+  <view wx:if="{{loading}}" class="spinner"></view>
+  <slot wx:else name="icon"/>
+  <view wx:if="{{!iconOnly}}" class="btn-label"><slot/></view>
+</button>

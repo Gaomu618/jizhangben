@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>记账本</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0F1419;
+      color: #E7E9EA;
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* 顶部导航栏 */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #0F1419;
+      border-bottom: 1px solid #2F3B4A;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .date-picker {
+      background: #1A2634;
+      border: 1px solid #2F3B4A;
+      color: #E7E9EA;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .date-picker::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+
+    /* 总资产区域 */
+    .balance-section {
+      padding: 32px 20px 24px;
+      text-align: center;
+    }
+
+    .balance-label {
+      font-size: 13px;
+      color: #6B7680;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .balance-amount {
+      font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 36px;
+      font-weight: 700;
+      color: #E7E9EA;
+      letter-spacing: -1px;
+    }
+
+    /* 收支汇总 */
+    .summary-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 20px 24px;
+    }
+
+    .summary-card {
+      background: #1A2634;
+      border: 1px solid #2F3B4A;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: #6B7680;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .summary-amount {
+      font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .income-color { color: #00C853; }
+    .expense-color { color: #FF3D00; }
+
+    /* 交易列表 */
+    .transaction-section {
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: #6B7680;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: #6B7680;
+    }
+
+    .transaction-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: #1A2634;
+      border-radius: 10px;
+      margin-bottom: 8px;
+    }
+
+    .tx-icon {
+      font-size: 24px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0F1419;
+      border-radius: 10px;
+      margin-right: 14px;
+    }
+
+    .tx-info {
+      flex: 1;
+    }
+
+    .tx-category {
+      font-size: 15px;
+      font-weight: 500;
+      color: #E7E9EA;
+      margin-bottom: 4px;
+    }
+
+    .tx-date {
+      font-size: 12px;
+      color: #6B7680;
+    }
+
+    .tx-amount {
+      font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* 底部固定按钮 */
+    .add-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 400px;
+      background: #E7E9EA;
+      color: #0F1419;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .add-btn:active {
+      opacity: 0.8;
+    }
+
+    .add-icon {
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    /* 模态框 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #1A2634;
+      border-radius: 20px 20px 0 0;
+      padding: 24px;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      font-size: 28px;
+      color: #6B7680;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* 金额输入 */
+    .amount-input-wrap {
+      display: flex;
+      align-items: center;
+      background: #0F1419;
+      border: 1px solid #2F3B4A;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+
+    .amount-yen {
+      font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 32px;
+      color: #6B7680;
+      margin-right: 8px;
+    }
+
+    .amount-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: "SF Mono", "Menlo", "Monaco", "Consolas", monospace;
+      font-size: 32px;
+      font-weight: 600;
+      color: #E7E9EA;
+    }
+
+    .amount-input::placeholder {
+      color: #6B7680;
+    }
+
+    /* 类型切换 */
+    .type-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .type-btn {
+      background: #0F1419;
+      border: 1px solid #2F3B4A;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #6B7680;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .type-btn.active {
+      background: #E7E9EA;
+      color: #0F1419;
+      border-color: #E7E9EA;
+    }
+
+    /* 4宫格分类 */
+    .category-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .cat-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: #0F1419;
+      border: 1px solid #2F3B4A;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-btn.selected {
+      border-color: #E7E9EA;
+      background: rgba(231, 233, 234, 0.1);
+    }
+
+    .cat-emoji {
+      font-size: 28px;
+    }
+
+    .cat-name {
+      font-size: 13px;
+      color: #E7E9EA;
+    }
+
+    /* 备注输入 */
+    .note-input {
+      width: 100%;
+      background: #0F1419;
+      border: 1px solid #2F3B4A;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: #E7E9EA;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    .note-input::placeholder {
+      color: #6B7680;
+    }
+
+    /* 确认按钮 */
+    .confirm-btn {
+      width: 100%;
+      background: #E7E9EA;
+      color: #0F1419;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .confirm-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .confirm-btn:not(:disabled):active {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- 顶部导航栏 -->
+    <header class="nav">
+      <div class="nav-left">
+        <span class="nav-title">记账本</span>
+      </div>
+      <div class="nav-right">
+        <input type="date" id="datePicker" class="date-picker" />
+      </div>
+    </header>
+
+    <!-- 总资产区域 -->
+    <section class="balance-section">
+      <p class="balance-label">总资产</p>
+      <p class="balance-amount" id="balanceAmount">¥0.00</p>
+    </section>
+
+    <!-- 收支汇总 -->
+    <section class="summary-section">
+      <div class="summary-card income">
+        <p class="summary-label">本月收入</p>
+        <p class="summary-amount income-color" id="totalIncome">+¥0.00</p>
+      </div>
+      <div class="summary-card expense">
+        <p class="summary-label">本月支出</p>
+        <p class="summary-amount expense-color" id="totalExpense">-¥0.00</p>
+      </div>
+    </section>
+
+    <!-- 交易列表 -->
+    <section class="transaction-section">
+      <p class="section-title">交易记录</p>
+      <div class="transaction-list" id="transactionList">
+        <div class="empty-state">
+          <p>暂无记录</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部固定按钮 -->
+    <button class="add-btn" id="addBtn">
+      <span class="add-icon">+</span>
+      记一笔
+    </button>
+
+    <!-- 底部弹出模态框 -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">新增记录</span>
+          <span class="modal-close" id="modalClose">×</span>
+        </div>
+
+        <!-- 金额输入 -->
+        <div class="amount-input-wrap">
+          <span class="amount-yen">¥</span>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            class="amount-input"
+            id="amountInput"
+          />
+        </div>
+
+        <!-- 类型切换 -->
+        <div class="type-toggle">
+          <button class="type-btn active" id="expenseBtn">支出</button>
+          <button class="type-btn" id="incomeBtn">收入</button>
+        </div>
+
+        <!-- 4宫格分类选择 -->
+        <div class="category-grid" id="categoryGrid"></div>
+
+        <!-- 备注输入 -->
+        <input
+          type="text"
+          placeholder="备注（选填）"
+          class="note-input"
+          id="noteInput"
+        />
+
+        <!-- 确认按钮 -->
+        <button class="confirm-btn" id="confirmBtn" disabled>确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const EXPENSE_CATEGORIES = [
+      { name: '餐饮', emoji: '🍜' },
+      { name: '出行', emoji: '🚗' },
+      { name: '购物', emoji: '🛒' },
+      { name: '娱乐', emoji: '🎮' },
+    ]
+
+    const INCOME_CATEGORIES = [
+      { name: '工资', emoji: '💰' },
+      { name: '奖金', emoji: '🎁' },
+      { name: '理财', emoji: '📈' },
+      { name: '其他', emoji: '💵' },
+    ]
+
+    let transactions = [
+      { id: 1, type: 'expense', category: '餐饮', amount: 38.5, date: '2026-06-01', note: '午餐' },
+      { id: 2, type: 'expense', category: '出行', amount: 12.0, date: '2026-06-01', note: '地铁' },
+      { id: 3, type: 'income', category: '工资', amount: 15000, date: '2026-06-01', note: '月薪' },
+      { id: 4, type: 'expense', category: '购物', amount: 299.0, date: '2026-06-01', note: '日用品' },
+      { id: 5, type: 'expense', category: '娱乐', amount: 88.0, date: '2026-06-01', note: '电影' },
+    ]
+
+    let currentType = 'expense'
+    let selectedCategory = '餐饮'
+
+    function getToday() {
+      return new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')
+    }
+
+    function init() {
+      document.getElementById('datePicker').value = getToday()
+      document.getElementById('datePicker').max = getToday()
+      renderCategories()
+      renderTransactions()
+      updateSummary()
+      bindEvents()
+    }
+
+    function renderCategories() {
+      const cats = currentType === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES
+      const grid = document.getElementById('categoryGrid')
+      grid.innerHTML = cats.map(cat => `
+        <button class="cat-btn ${cat.name === selectedCategory ? 'selected' : ''}" data-cat="${cat.name}">
+          <span class="cat-emoji">${cat.emoji}</span>
+          <span class="cat-name">${cat.name}</span>
+        </button>
+      `).join('')
+
+      grid.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          grid.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'))
+          btn.classList.add('selected')
+          selectedCategory = btn.dataset.cat
+        })
+      })
+    }
+
+    function renderTransactions() {
+      const selectedDate = document.getElementById('datePicker').value
+      const filtered = transactions.filter(t => t.date === selectedDate)
+      const list = document.getElementById('transactionList')
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state"><p>暂无记录</p></div>'
+        return
+      }
+
+      const emojiMap = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].reduce((m, c) => {
+        m[c.name] = c.emoji; return m
+      }, {})
+
+      list.innerHTML = filtered.map(t => `
+        <div class="transaction-row">
+          <div class="tx-icon">${emojiMap[t.category] || '📝'}</div>
+          <div class="tx-info">
+            <p class="tx-category">${t.category}</p>
+            <p class="tx-date">${t.note || t.date}</p>
+          </div>
+          <div class="tx-amount ${t.type === 'income' ? 'income-color' : 'expense-color'}">
+            ${t.type === 'income' ? '+' : '-'}¥${t.amount.toFixed(2)}
+          </div>
+        </div>
+      `).join('')
+    }
+
+    function updateSummary() {
+      const income = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+      const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+      const balance = income - expense
+
+      document.getElementById('balanceAmount').textContent = `¥${balance.toLocaleString('zh-CN', {minimumFractionDigits: 2})}`
+      document.getElementById('totalIncome').textContent = `+¥${income.toLocaleString('zh-CN', {minimumFractionDigits: 2})}`
+      document.getElementById('totalExpense').textContent = `-¥${expense.toLocaleString('zh-CN', {minimumFractionDigits: 2})}`
+    }
+
+    function bindEvents() {
+      document.getElementById('addBtn').addEventListener('click', openModal)
+      document.getElementById('modalClose').addEventListener('click', closeModal)
+      document.getElementById('modalOverlay').addEventListener('click', e => {
+        if (e.target === document.getElementById('modalOverlay')) closeModal()
+      })
+
+      document.getElementById('expenseBtn').addEventListener('click', () => {
+        currentType = 'expense'
+        selectedCategory = '餐饮'
+        updateTypeUI()
+        renderCategories()
+      })
+
+      document.getElementById('incomeBtn').addEventListener('click', () => {
+        currentType = 'income'
+        selectedCategory = '工资'
+        updateTypeUI()
+        renderCategories()
+      })
+
+      document.getElementById('amountInput').addEventListener('input', e => {
+        document.getElementById('confirmBtn').disabled = !e.target.value
+      })
+
+      document.getElementById('confirmBtn').addEventListener('click', submitRecord)
+
+      document.getElementById('datePicker').addEventListener('change', renderTransactions)
+    }
+
+    function updateTypeUI() {
+      document.getElementById('expenseBtn').classList.toggle('active', currentType === 'expense')
+      document.getElementById('incomeBtn').classList.toggle('active', currentType === 'income')
+    }
+
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('active')
+      document.getElementById('amountInput').value = ''
+      document.getElementById('noteInput').value = ''
+      document.getElementById('confirmBtn').disabled = true
+      currentType = 'expense'
+      selectedCategory = '餐饮'
+      updateTypeUI()
+      renderCategories()
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active')
+    }
+
+    function submitRecord() {
+      const amount = parseFloat(document.getElementById('amountInput').value)
+      if (!amount) return
+
+      transactions.unshift({
+        id: Date.now(),
+        type: currentType,
+        category: selectedCategory,
+        amount,
+        date: document.getElementById('datePicker').value,
+        note: document.getElementById('noteInput').value
+      })
+
+      closeModal()
+      renderTransactions()
+      updateSummary()
+    }
+
+    init()
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* BaseTag — 颜色变体 */
+.base-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.tag-size-sm { padding: 4rpx 16rpx; font-size: 22rpx; }
+.tag-size-md { padding: 8rpx 20rpx; font-size: 24rpx; }
+.tag-size-lg { padding: 12rpx 28rpx; font-size: 26rpx; }
+
+.tag-neutral   { --tag-color: var(--color-text-secondary); --tag-bg: var(--paper-200); --tag-border: transparent; }
+.tag-positive  { --tag-color: var(--color-feedback-positive); --tag-bg: var(--green-50); --tag-border: transparent; }
+.tag-warning   { --tag-color: #92590a; --tag-bg: var(--gold-50); --tag-border: transparent; }
+.tag-negative  { --tag-color: #b53d12; --tag-bg: var(--orange-50); --tag-border: transparent; }
+.tag-accent    { --tag-color: var(--color-action-accent); --tag-bg: var(--orange-50); --tag-border: transparent; }
+.tag-gold      { --tag-color: var(--gold-500); --tag-bg: var(--gold-50); --tag-border: transparent; }
+
+.tag-style-solid   { background: var(--tag-color); color: var(--color-text-inverse); border: 2rpx solid transparent; }
+.tag-style-soft    { background: var(--tag-bg); color: var(--tag-color); border: 2rpx solid transparent; }
+.tag-style-outline { background: transparent; color: var(--tag-color); border: 2rpx solid var(--tag-color); }

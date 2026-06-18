@@ -1,0 +1,70 @@
+/* =====================================================================
+   Decoration — 背景装饰（径向光晕 / 网格 mask / 噪点 / 分割线）
+   从 frontend/src/decoration.css 翻译。
+   小程序里用 view 标签，:before/:after 仅在伪类场景使用。
+   ===================================================================== */
+
+/* 径向光晕：右上角暖色 */
+.deco-glow-tr {
+  position: absolute;
+  top: -400rpx;
+  right: -400rpx;
+  width: 1200rpx;
+  height: 1200rpx;
+  background: radial-gradient(circle, rgba(217, 79, 30, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 径向光晕：左下冷色 */
+.deco-glow-bl {
+  position: absolute;
+  bottom: -400rpx;
+  left: -400rpx;
+  width: 1000rpx;
+  height: 1000rpx;
+  background: radial-gradient(circle, rgba(29, 58, 138, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 网格 mask：用于 page-level 背景 */
+.deco-grid {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.025) 2rpx, transparent 2rpx),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.025) 2rpx, transparent 2rpx);
+  background-size: 96rpx 96rpx;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 装饰性分割线：渐变 */
+.deco-divider {
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, var(--color-border) 30%, var(--color-border) 70%, transparent);
+  margin: 48rpx 0;
+}
+
+.deco-divider-vertical {
+  width: 2rpx;
+  background: linear-gradient(180deg, transparent, var(--color-border) 30%, var(--color-border) 70%, transparent);
+}
+
+/* 数字前的装饰符号（规范：对齐用） */
+.deco-mark {
+  display: inline-block;
+  width: 8rpx;
+  height: 8rpx;
+  background: currentColor;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 16rpx;
+  opacity: 0.7;
+}
+
+/* 数据卡背景纸纹（纸张感） */
+.deco-paper {
+  background: linear-gradient(180deg, var(--card-bg) 0%, var(--paper-50) 100%);
+}

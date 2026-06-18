@@ -1,0 +1,10 @@
+<view class="base-empty">
+  <view class="empty-icon">
+    <slot name="icon"/>
+  </view>
+  <view wx:if="{{title}}" class="empty-title display">{{title}}</view>
+  <view wx:if="{{message}}" class="empty-message body-sm">{{message}}</view>
+  <view wx:if="{{cta}}" class="empty-cta">
+    <slot name="cta"/>
+  </view>
+</view>

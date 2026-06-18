@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "base-card": "/components/base/base-card",
+    "base-button": "/components/base/base-button",
+    "base-input": "/components/base/base-input"
+  },
+  "navigationBarTitleText": "完善资料"
+}

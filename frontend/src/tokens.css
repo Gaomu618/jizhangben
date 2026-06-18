@@ -1,0 +1,86 @@
+/* =====================================================================
+   Design Tokens — 3-Layer Architecture
+   组件只用 Layer 3；主题切换只改 Layer 1/2。
+   ===================================================================== */
+
+:root {
+  /* ============== Layer 1 · Primitive（原子层 · 不直接用） ============== */
+  --ink-900: #0f172a;
+  --ink-800: #1e293b;
+  --ink-700: #334155;
+
+  --paper-50: #fdfbf6;
+  --paper-100: #faf7f2;
+  --paper-200: #f3ede4;
+
+  --orange-500: #d94f1e;
+  --orange-50: #fde7dc;
+
+  --gold-500: #b8893a;
+  --gold-50: #f5e9d4;
+
+  --blue-500: #1d3a8a;
+  --blue-50: #e7ecf7;
+
+  --green-500: #10b981;
+  --green-700: #047857;
+  --green-50: #d1fae5;
+
+  --line: #e7e1d4;
+  --line-soft: #efe9dc;
+  --muted: #6b6357;
+  --muted-2: #9a9081;
+
+  /* ============== Layer 2 · Semantic（语义层 · 角色定义） ============== */
+  --color-bg-default: var(--paper-100);
+  --color-bg-elevated: #ffffff;
+  --color-bg-deep: var(--ink-900);
+
+  --color-text-primary: var(--ink-900);
+  --color-text-secondary: var(--muted);
+  --color-text-muted: var(--muted-2);
+  --color-text-inverse: var(--paper-50);
+
+  --color-action-primary: var(--ink-900);
+  --color-action-accent: var(--orange-500);
+
+  --color-feedback-positive: var(--green-700);
+  --color-feedback-negative: var(--orange-500);
+  --color-feedback-warning: var(--gold-500);
+
+  --color-border: var(--line);
+  --color-border-soft: var(--line-soft);
+
+  /* ============== Layer 3 · Component（组件层 · 直接用） ============== */
+  --btn-primary-bg: var(--color-action-primary);
+  --btn-primary-text: var(--color-text-inverse);
+  --btn-primary-shadow: 0 4px 14px rgba(15, 23, 42, .18);
+  --btn-accent-bg: var(--color-action-accent);
+  --btn-radius: 12px;
+  --btn-radius-sm: 9px;
+
+  --card-bg: var(--color-bg-elevated);
+  --card-border: var(--color-border);
+  --card-radius: 16px;
+  --card-radius-lg: 20px;
+
+  --input-bg: var(--paper-50);
+  --input-border: var(--color-border);
+  --input-radius: 9px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, .04), 0 1px 3px rgba(15, 23, 42, .04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, .06), 0 2px 4px rgba(15, 23, 42, .04);
+  --shadow-lg: 0 16px 40px -12px rgba(15, 23, 42, .18), 0 4px 12px rgba(15, 23, 42, .06);
+
+  /* ============== Typography ============== */
+  --font-display: 'Noto Serif SC', 'Times New Roman', serif;
+  --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-num: 'Outfit', var(--font-body);
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ============== Motion ============== */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 150ms;
+  --t-base: 250ms;
+  --t-slow: 400ms;
+}

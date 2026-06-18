@@ -1,0 +1,72 @@
+/* BaseButton — 5 variants × 4 sizes */
+/* 基础 .btn 工具类在 style.wxss 已定义 */
+
+.btn { transition: all var(--t-fast) var(--ease-out); white-space: nowrap; user-select: none; }
+.btn::after { border: none; }
+.btn-active { opacity: 0.85; transform: translateY(2rpx); }
+
+.btn-block { display: flex; width: 100%; }
+.btn-icon-only { padding: 0; aspect-ratio: 1; }
+
+/* Sizes */
+.btn-sm { height: 56rpx; padding: 0 24rpx; font-size: 26rpx; min-height: 56rpx; }
+.btn-md { height: 80rpx; padding: 0 32rpx; font-size: 29rpx; min-height: 80rpx; }
+.btn-lg { height: 96rpx; padding: 0 40rpx; font-size: 32rpx; min-height: 96rpx; }
+.btn-xl { height: 112rpx; padding: 0 56rpx; font-size: 32rpx; letter-spacing: 0.04em; min-height: 112rpx; }
+
+.btn-sm.btn-icon-only { width: 56rpx; }
+.btn-md.btn-icon-only { width: 80rpx; }
+.btn-lg.btn-icon-only { width: 96rpx; }
+
+/* Variants（颜色 + 阴影） */
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: var(--btn-primary-shadow);
+}
+.btn-accent {
+  background: var(--btn-accent-bg);
+  color: var(--color-text-inverse);
+  box-shadow: 0 8rpx 28rpx rgba(217, 79, 30, 0.25);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 2rpx solid var(--color-border);
+}
+.btn-soft {
+  background: var(--paper-200);
+  color: var(--color-text-primary);
+  border: 2rpx solid transparent;
+}
+.btn-dark {
+  background: var(--paper-50);
+  color: var(--ink-900);
+}
+.btn-danger {
+  background: rgba(217, 79, 30, 0.08);
+  color: var(--color-feedback-negative, #d94f1e);
+  border: 2rpx solid rgba(217, 79, 30, 0.25);
+}
+.btn-danger.is-loading,
+.btn-danger:disabled {
+  opacity: 0.55;
+}
+
+/* 组件 wxss 不允许属性选择器，全部用 class + :disabled 伪类表达 */
+.btn.is-loading,
+.btn:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Loading 旋转 */
+.spinner {
+  width: 28rpx;
+  height: 28rpx;
+  border: 4rpx solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

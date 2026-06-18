@@ -1,0 +1,51 @@
+<view class="setup-page">
+  <view class="deco-glow-tr"></view>
+
+  <!-- 头部 -->
+  <view class="hero motion-zoom-in">
+    <view class="hero-eyebrow eyebrow-accent">FIRST TIME</view>
+    <view class="hero-title">完善你的资料</view>
+    <view class="hero-sub text-muted">设个昵称和头像，让账本更属于你</view>
+  </view>
+
+  <!-- 头像选择（微信 chooseAvatar） -->
+  <view class="section motion-slide-up motion-slide-up-base">
+    <view class="card-label">选择头像</view>
+    <view class="avatar-preview">
+      <!-- 微信官方：open-type="chooseAvatar" 让用户从"换头像"面板选（含微信头像 + 相册） -->
+      <button class="avatar-circle avatar-pickable" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{avatarLocalPath}}" class="avatar-image" src="{{avatarLocalPath}}" mode="aspectFill"></image>
+        <text wx:else class="avatar-placeholder">点击选择</text>
+      </button>
+      <view class="avatar-hint micro text-muted">点圆形 → 从微信/相册选</view>
+    </view>
+  </view>
+
+  <!-- 昵称输入 -->
+  <view class="section motion-slide-up motion-slide-up-slow">
+    <view class="card-label">昵称</view>
+    <!-- type="nickname" + focus → 进页面就唤起微信"使用微信昵称"建议条，一点即填 -->
+    <base-input
+      type="nickname"
+      focus="{{nicknameFocus}}"
+      value="{{nickname}}"
+      placeholder="点这里使用微信昵称（或自己输入）"
+      maxlength="20"
+      bind:input="onNicknameInput"
+    />
+    <view class="char-count micro text-muted">{{nickname.length}} / 20</view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="actions motion-fade-in motion-fade-in-slow">
+    <base-button
+      block
+      size="lg"
+      variant="primary"
+      loading="{{saving}}"
+      disabled="{{!nickname}}"
+      bind:click="onSave"
+    >保存</base-button>
+    <view class="skip-btn micro text-muted" bindtap="onSkip">以后再说</view>
+  </view>
+</view>

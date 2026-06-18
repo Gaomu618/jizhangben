@@ -1,4 +1,9 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "base-card": "/components/base/base-card",
+    "base-empty": "/components/base/base-empty",
+    "base-empty-state": "/components/base/base-empty-state/base-empty-state",
+    "base-button": "/components/base/base-button"
+  },
   "navigationBarTitleText": "统计"
 }

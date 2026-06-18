@@ -1,0 +1,124 @@
+<view class="page app-bg">
+  <view class="deco-glow-tr"></view>
+
+  <!-- 月份标题 -->
+  <view class="month-header">
+    <view class="month-btn" bindtap="prevMonth">‹</view>
+    <view class="month-label h-card">{{year}}年{{month}}月</view>
+    <view class="month-btn" bindtap="nextMonth">›</view>
+  </view>
+
+  <!-- 已有预算列表 -->
+  <view class="section">
+    <view class="eyebrow section-title">本月预算</view>
+
+    <block wx:if="{{budgets.length > 0}}">
+      <view
+        wx:for="{{budgets}}"
+        wx:key="category"
+        class="budget-item card card-pad-md"
+      >
+        <view class="budget-row-head row between">
+          <text class="budget-cat h-list">{{item.category}}</text>
+          <text class="budget-amount numeric {{item.percent >= 80 ? 'text-expense' : ''}}">
+            ¥{{item.spentRmb}}<text class="muted-sm">/¥{{item.budgetRmb}}</text>
+          </text>
+        </view>
+        <view class="budget-bar">
+          <view
+            class="budget-bar-fill"
+            style="width: {{item.widthStyle}}; background: {{item.bgStyle}};"
+          ></view>
+        </view>
+        <view class="budget-tip">
+          <text class="micro {{item.tipClass}}">{{item.tipText}}</text>
+        </view>
+
+        <view wx:if="{{editingCategory === item.category}}" class="budget-edit">
+          <base-input
+            value="{{editAmount}}"
+            type="digit"
+            placeholder="新金额"
+            maxlength="10"
+            bind:input="onEditAmountInput"
+          />
+          <view class="budget-edit-actions">
+            <button
+              class="btn-mini btn-mini--ghost"
+              data-cat="{{item.category}}"
+              bindtap="onCancelEdit">取消</button>
+            <button
+              class="btn-mini btn-mini--primary"
+              data-cat="{{item.category}}"
+              bindtap="onSaveEdit">保存</button>
+          </view>
+        </view>
+        <view wx:else class="budget-actions">
+          <button
+            class="btn-mini btn-mini--ghost"
+            data-cat="{{item.category}}" data-amount="{{item.budget}}"
+            bindtap="onStartEdit">修改</button>
+          <button
+            class="btn-mini btn-mini--ghost btn-mini--danger"
+            data-cat="{{item.category}}"
+            bindtap="onDelete">删除</button>
+        </view>
+      </view>
+    </block>
+
+    <base-empty
+      wx:else
+      title="本月还没有设置预算"
+      message="设置预算后，超支时会有提示"
+    />
+  </view>
+
+  <!-- 添加预算 -->
+  <view class="section">
+    <view class="eyebrow section-title">添加预算</view>
+    <view class="add-form card card-pad-md">
+      <view class="form-row">
+        <text class="form-label">分类</text>
+        <picker mode="selector" range="{{availableCategories}}" value="{{newCategoryIndex}}" bindchange="onNewCategoryChange" class="form-picker">
+          <view class="picker-row">
+            <text class="picker-val {{newCategory ? '' : 'text-muted'}}">
+              {{newCategory || '请选择分类'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label">金额</text>
+        <base-input
+          value="{{newAmount}}"
+          type="digit"
+          placeholder="0.00"
+          maxlength="10"
+          bind:input="onNewAmountInput"
+        />
+      </view>
+
+      <view class="quick-amounts">
+        <view
+          wx:for="{{quickAmounts}}"
+          wx:key="*this"
+          class="quick-chip"
+          data-amt="{{item}}"
+          bindtap="onQuickAmount"
+        >¥{{item}}</view>
+      </view>
+
+      <base-button
+        block
+        size="lg"
+        variant="accent"
+        bind:click="onAdd"
+        disabled="{{!newCategory || !newAmount}}"
+      >保存预算</base-button>
+    </view>
+  </view>
+
+  <view class="tabbar-safe"></view>
+</view>

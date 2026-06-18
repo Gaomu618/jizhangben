@@ -1,0 +1,8 @@
+<view
+  class="base-card card-{{variant}} card-pad-{{padding}} {{hoverable ? 'is-hoverable' : ''}} {{selected ? 'is-selected' : ''}} {{disabled ? 'is-disabled' : ''}}"
+  hover-class="{{hoverable ? 'is-hoverable-active' : 'none'}}"
+  hover-stay-time="100"
+  bindtap="onTap"
+>
+  <slot/>
+</view>

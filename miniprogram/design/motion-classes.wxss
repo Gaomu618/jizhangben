@@ -1,0 +1,138 @@
+/* ============================================
+   Motion Classes — 统一微动效
+   由 utils/motion.js 暴露给页面使用
+   用法：class="motion-fade-in motion-fade-in-fast"
+   ============================================ */
+
+/* === 时长变量 === */
+.motion-fade-in-fast, .motion-fade-out-fast,
+.motion-slide-up-fast, .motion-slide-down-fast,
+.motion-slide-left-fast, .motion-slide-right-fast,
+.motion-zoom-in-fast, .motion-zoom-out-fast,
+.motion-pulse-fast, .motion-shake-fast,
+.motion-shimmer-fast, .motion-spin-fast { animation-duration: 150ms; }
+
+.motion-fade-in-base, .motion-fade-out-base,
+.motion-slide-up-base, .motion-slide-down-base,
+.motion-slide-left-base, .motion-slide-right-base,
+.motion-zoom-in-base, .motion-zoom-out-base,
+.motion-pulse-base, .motion-shake-base,
+.motion-shimmer-base, .motion-spin-base { animation-duration: 250ms; }
+
+.motion-fade-in-slow, .motion-fade-out-slow,
+.motion-slide-up-slow, .motion-slide-down-slow,
+.motion-slide-left-slow, .motion-slide-right-slow,
+.motion-zoom-in-slow, .motion-zoom-out-slow,
+.motion-pulse-slow, .motion-shake-slow,
+.motion-shimmer-slow, .motion-spin-slow { animation-duration: 400ms; }
+
+/* === 缓动函数 === */
+.motion-fade-in, .motion-fade-out,
+.motion-slide-up, .motion-slide-down,
+.motion-slide-left, .motion-slide-right,
+.motion-zoom-in, .motion-zoom-out {
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* === 淡入淡出 === */
+@keyframes motion-fade-in-anim {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.motion-fade-in {
+  animation-name: motion-fade-in-anim;
+  animation-fill-mode: both;
+}
+
+@keyframes motion-fade-out-anim {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.motion-fade-out {
+  animation-name: motion-fade-out-anim;
+  animation-fill-mode: both;
+}
+
+/* === 滑动 === */
+@keyframes motion-slide-up-anim {
+  from { opacity: 0; transform: translateY(40rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.motion-slide-up {
+  animation-name: motion-slide-up-anim;
+  animation-fill-mode: both;
+}
+
+@keyframes motion-slide-down-anim {
+  from { opacity: 0; transform: translateY(-40rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.motion-slide-down {
+  animation-name: motion-slide-down-anim;
+  animation-fill-mode: both;
+}
+
+@keyframes motion-slide-left-anim {
+  from { opacity: 0; transform: translateX(40rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.motion-slide-left {
+  animation-name: motion-slide-left-anim;
+  animation-fill-mode: both;
+}
+
+@keyframes motion-slide-right-anim {
+  from { opacity: 0; transform: translateX(-40rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.motion-slide-right {
+  animation-name: motion-slide-right-anim;
+  animation-fill-mode: both;
+}
+
+/* === 缩放 === */
+@keyframes motion-zoom-in-anim {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.motion-zoom-in {
+  animation-name: motion-zoom-in-anim;
+  animation-fill-mode: both;
+}
+
+@keyframes motion-zoom-out-anim {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.9); }
+}
+.motion-zoom-out {
+  animation-name: motion-zoom-out-anim;
+  animation-fill-mode: both;
+}
+
+/* === 强调 === */
+@keyframes motion-pulse-anim {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.motion-pulse {
+  animation: motion-pulse-anim 2s ease-in-out infinite;
+  animation-duration: var(--motion-pulse-dur, 2s);
+}
+
+/* === 加载 === */
+@keyframes motion-shimmer-anim {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+.motion-shimmer {
+  animation: motion-shimmer-anim 1.5s ease-in-out infinite;
+}
+
+@keyframes motion-spin-anim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.motion-spin {
+  animation: motion-spin-anim 1s linear infinite;
+}

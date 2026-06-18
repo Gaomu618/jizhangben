@@ -1,0 +1,152 @@
+.page {
+  min-height: 100vh;
+  padding: 48rpx 32rpx 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48rpx;
+  margin-bottom: 32rpx;
+  position: relative;
+  z-index: 1;
+}
+.month-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 32rpx;
+  background: var(--paper-200);
+  color: var(--ink-900);
+  font-size: 40rpx;
+  font-weight: 500;
+}
+.month-label { font-weight: 500; }
+
+.section { margin-top: 32rpx; position: relative; z-index: 1; }
+.section-title { display: block; margin-bottom: 16rpx; padding-left: 8rpx; }
+
+.budget-item { margin-bottom: 16rpx; }
+.budget-row-head { align-items: baseline; margin-bottom: 12rpx; }
+.budget-cat { font-size: 30rpx; font-weight: 600; color: var(--color-text-primary); }
+.budget-amount { font-size: 26rpx; font-weight: 600; }
+.muted-sm { color: var(--color-text-muted); font-weight: 400; }
+
+.budget-bar {
+  height: 12rpx;
+  background: var(--paper-200);
+  border-radius: 6rpx;
+  overflow: hidden;
+  margin: 8rpx 0;
+}
+.budget-bar-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width var(--t-slow) var(--ease-out), background var(--t-base) var(--ease-out);
+}
+
+.budget-tip { margin-top: 8rpx; font-size: 24rpx; }
+.tip-over { color: var(--color-feedback-negative); font-weight: 600; }
+.tip-warn { color: var(--color-feedback-warning); font-weight: 500; }
+.tip-muted { color: var(--color-text-muted); }
+.text-muted { color: var(--color-text-muted); }
+.text-expense { color: var(--color-feedback-negative); }
+
+.budget-actions, .budget-edit {
+  margin-top: 16rpx;
+  display: flex;
+  gap: 12rpx;
+  justify-content: flex-end;
+}
+.budget-edit { flex-direction: column; gap: 16rpx; }
+.budget-edit-actions { display: flex; gap: 12rpx; justify-content: flex-end; }
+
+/* ============ 行内小按钮（修改/删除/取消/保存）============
+   用原生 <button> 而非 base-button 组件，避免样式隔离问题
+   关键：width: calc(50% - 6rpx) — 强制等宽，gap 减半
+   无论父容器多宽，两个按钮严格 50% 各自 + 共享 gap，绝不溢出 */
+.btn-mini {
+  /* 强制尺寸：calc(50% - 6rpx) 是 50% 减 gap 的一半 */
+  width: calc(50% - 6rpx);
+  min-width: 0;            /* 覆盖微信 button 默认 min-width */
+  max-width: 160rpx;       /* 大屏上不超过 160rpx（防止按钮太宽） */
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  border-radius: 28rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  /* 重置微信 button 自带样式 */
+  background-color: var(--paper-200);
+  color: var(--ink-900);
+  border: none;
+}
+.btn-mini::after { border: none; }  /* 去掉微信 button 默认边框 */
+
+/* 三个变体：全部用统一风格，仅"删除"用文字色区分危险操作 */
+.btn-mini--ghost {
+  background-color: var(--paper-200);
+  color: var(--ink-900);
+}
+.btn-mini--primary {
+  background-color: var(--btn-primary-bg, #d94f1e);
+  color: var(--color-text-inverse, #fff);
+  box-shadow: 0 4rpx 12rpx rgba(217, 79, 30, 0.2);
+}
+.btn-mini--danger {
+  color: var(--color-feedback-negative, #d94f1e);
+}
+
+.add-form { padding: 24rpx; }
+.form-row { margin-bottom: 24rpx; }
+.form-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 8rpx;
+}
+.form-picker { display: block; }
+.picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background: var(--input-bg);
+  border: 2rpx solid var(--input-border);
+  border-radius: var(--input-radius);
+  font-size: 28rpx;
+  min-height: 80rpx;
+  box-sizing: border-box;
+}
+.picker-val { color: var(--color-text-primary); }
+.picker-val.text-muted { color: var(--color-text-muted); }
+.picker-arrow { color: var(--color-text-muted); font-size: 32rpx; }
+
+.quick-amounts {
+  display: flex;
+  gap: 12rpx;
+  margin: 16rpx 0 24rpx;
+}
+.quick-chip {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  background: var(--paper-200);
+  border-radius: var(--input-radius);
+  font-size: 26rpx;
+  color: var(--color-text-primary);
+  font-family: var(--font-num);
+}
+
+.tabbar-safe { height: 180rpx; }

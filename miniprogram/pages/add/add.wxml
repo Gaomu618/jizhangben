@@ -1,37 +1,110 @@
-<view class="container">
-  <view class="form-item">
-    <text class="label">日期</text>
-    <picker mode="date" value="{{date}}" bindchange="bindDateChange">
-      <view class="picker">{{date}}</view>
-    </picker>
+<view class="page app-bg">
+  <view class="deco-glow-tr"></view>
+
+  <!-- 顶部类型切换（收入/支出） -->
+  <view class="type-bar row">
+    <view
+      class="type-pill {{type === 'expense' ? 'is-active' : ''}}"
+      data-type="expense"
+      bindtap="onTypeChange"
+    >
+      支出
+    </view>
+    <view
+      class="type-pill {{type === 'income' ? 'is-active' : ''}}"
+      data-type="income"
+      bindtap="onTypeChange"
+    >
+      收入
+    </view>
   </view>
 
-  <view class="form-item">
-    <text class="label">金额</text>
-    <input type="digit" placeholder="0.00" bindinput="bindAmountInput" value="{{amount}}" />
+  <!-- 金额输入（巨型数字） -->
+  <view class="amount-card card card-pad-lg">
+    <view class="eyebrow">{{type === 'expense' ? 'NO.03 · EXPENSE' : 'NO.03 · INCOME'}}</view>
+    <view class="amount-row">
+      <text class="amount-sign">¥</text>
+      <input
+        class="amount-input numeric"
+        type="digit"
+        value="{{amount}}"
+        placeholder="0.00"
+        placeholder-class="amount-placeholder"
+        maxlength="10"
+        focus="{{true}}"
+        bindinput="onAmountInput"
+      />
+    </view>
   </view>
 
-  <view class="form-item">
-    <text class="label">类型：{{type}}</text>
-    <radio-group bindchange="typeChange">
-      <label><radio value="expense" checked="{{type === 'expense'}}" />支出</label>
-      <label><radio value="income" checked="{{type === 'income'}}" />收入</label>
-    </radio-group>
-  </view>
-
-  <view class="form-item">
-    <text class="label">分类：{{category}}</text>
-    <view class="category-selector">
-      <view wx:for="{{categories}}" wx:key="*this" bindtap="tapCategory" data-index="{{index}}">
-        <text class="{{category === item ? 'active' : ''}}">{{item}}</text>
+  <!-- 分类选择 -->
+  <view class="section">
+    <view class="eyebrow section-title">分类</view>
+    <view class="cat-grid">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="cat-chip {{category === item ? 'is-active' : ''}}"
+        bindtap="onCategoryTap"
+        data-cat="{{item}}"
+      >
+        {{item}}
       </view>
     </view>
   </view>
 
-  <view class="form-item">
-    <text class="label">备注</text>
-    <input type="text" placeholder="可选" bindinput="bindNoteInput" value="{{note}}" />
+  <!-- 日期 + 备注 -->
+  <view class="section">
+    <view class="eyebrow section-title">日期</view>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange" class="picker-row card card-pad-md">
+      <text class="body">{{date}}</text>
+      <text class="picker-arrow">›</text>
+    </picker>
   </view>
 
-  <button class="submit-btn" type="primary" bindtap="submit">保存</button>
+  <view class="section">
+    <view class="eyebrow section-title">备注</view>
+    <base-input
+      value="{{note}}"
+      placeholder="选填，写点什么吧"
+      maxlength="50"
+      bind:input="onNoteInput"
+    />
+
+    <!-- 智能分类提示：仅在智能分类有结果时显示 -->
+    <view
+      wx:if="{{classifyHint}}"
+      class="classify-hint classify-hint--{{classifyHint.level}}"
+      hover-class="classify-hint-hover"
+      bindtap="onApplyClassify"
+    >
+      <view class="classify-hint-left">
+        <text class="classify-hint-icon">✨</text>
+        <text class="classify-hint-text">推荐：</text>
+        <text class="classify-hint-cat">{{classifyHint.categoryText}}</text>
+        <text class="classify-hint-confidence classify-hint-confidence--{{classifyHint.level}}">
+          {{classifyHint.percentText}}
+        </text>
+      </view>
+      <view wx:if="{{classifyHint.matched}}" class="classify-hint-matched">
+        匹配: {{classifyHint.matched}}
+      </view>
+      <view class="classify-hint-arrow">应用 ›</view>
+    </view>
+  </view>
+
+  <!-- 提交 -->
+  <view class="submit-bar">
+    <base-button
+      block
+      size="xl"
+      variant="accent"
+      loading="{{submitting}}"
+      bind:click="onSubmit"
+    >
+      {{type === 'expense' ? '记一笔支出' : '记一笔收入'}}
+    </base-button>
+  </view>
+
+  <view class="tabbar-safe"></view>
 </view>

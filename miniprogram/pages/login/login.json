@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
-  "navigationBarTitleText": "登录"
+  "usingComponents": {
+    "base-button": "/components/base/base-button"
+  },
+  "navigationStyle": "custom"
 }
